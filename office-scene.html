@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>锈湖风格办公室场景</title>
+    <link rel="stylesheet" href="./public/css/styles.css">
+</head>
+<body>
+    <div class="scene-container">
+        <div id="office-scene-container">
+            <div id="office-scene">
+                <!-- 可交互区域将通过JavaScript动态添加 -->
+                <div id="dialog-box"></div>
+                <div id="game-tips">提示：右键点击帮助按钮(?)可重置游戏进度</div>
+            </div>
+            
+            <!-- 茶水间场景 -->
+            <div id="breakroom-scene" style="display: none;">
+                <!-- 茶水间可交互区域将通过JavaScript动态添加 -->
+            </div>
+            
+            <!-- 场景切换按钮 -->
+            <div id="scene-transition" style="display: none;">
+                <button id="go-to-breakroom">前往茶水间</button>
+                <button id="go-to-office" style="display: none;">返回办公室</button>
+            </div>
+        </div>
+        
+        <!-- 电脑屏幕 -->
+        <div id="computer-screen">
+            <div class="computer-header">
+                <div class="system-info">QUANTUM-OS v3.5.7</div>
+                <button id="close-computer">×</button>
+            </div>
+            <div id="computer-content">
+                <h3>量子矩阵科技 - 安全终端</h3>
+                <div class="terminal-line">
+                    <span class="terminal-prompt">$</span> <span class="terminal-text">访问系统...</span>
+                </div>
+                <div class="terminal-line">
+                    <span class="terminal-prompt">$</span> <span class="terminal-text">需要验证身份...</span>
+                </div>
+                <div class="security-panel">
+                    <div class="security-header">
+                        <div class="security-icon"></div>
+                        <div class="security-text">请输入4位安全密码</div>
+                    </div>
+                    <div class="password-container">
+                        <input type="text" class="password-digit" maxlength="1" data-index="0">
+                        <input type="text" class="password-digit" maxlength="1" data-index="1">
+                        <input type="text" class="password-digit" maxlength="1" data-index="2">
+                        <input type="text" class="password-digit" maxlength="1" data-index="3">
+                    </div>
+                    <button id="login-button">验证</button>
+                    <div class="login-help">忘记密码？试试"已尝试关闭并重新打开"</div>
+                </div>
+            </div>
+            
+            <!-- 电脑桌面 -->
+            <div id="computer-desktop" style="display: none;">
+                <!-- 使用图片中已有的图标区域 -->
+                <div id="desktop-hotspots">
+                    <div class="desktop-hotspot" id="mail-hotspot" data-name="email"></div>
+                    <div class="desktop-hotspot" id="folder-hotspot" data-name="folder"></div>
+                    <div class="desktop-hotspot" id="gallery-hotspot" data-name="gallery"></div>
+                    <div class="desktop-hotspot" id="trash-hotspot" data-name="trash"></div>
+                    <div class="desktop-hotspot" id="terminal-hotspot" data-name="terminal"></div>
+                </div>
+                <button id="desktop-close">×</button>
+            </div>
+        </div>
+        
+        <!-- 密码锁界面 -->
+        <div id="code-lock">
+            <div id="code-display">000</div>
+            <div class="number-buttons">
+                <button class="number-button" data-digit="1">1</button>
+                <button class="number-button" data-digit="2">2</button>
+                <button class="number-button" data-digit="3">3</button>
+                <button class="number-button" data-digit="4">4</button>
+                <button class="number-button" data-digit="5">5</button>
+                <button class="number-button" data-digit="6">6</button>
+                <button class="number-button" data-digit="7">7</button>
+                <button class="number-button" data-digit="8">8</button>
+                <button class="number-button" data-digit="9">9</button>
+                <button class="number-button" data-digit="0">0</button>
+            </div>
+            <button id="confirm-code">确认</button>
+            <button id="close-lock">关闭</button>
+        </div>
+        
+        <!-- 门禁面板 -->
+        <div id="door-panel" style="display: none;">
+            <h3>门禁系统</h3>
+            <div id="door-code-display">____</div>
+            <div class="door-keypad">
+                <button class="door-key" data-digit="1">1</button>
+                <button class="door-key" data-digit="2">2</button>
+                <button class="door-key" data-digit="3">3</button>
+                <button class="door-key" data-digit="4">4</button>
+                <button class="door-key" data-digit="5">5</button>
+                <button class="door-key" data-digit="6">6</button>
+                <button class="door-key" data-digit="7">7</button>
+                <button class="door-key" data-digit="8">8</button>
+                <button class="door-key" data-digit="9">9</button>
+                <button class="door-key" data-digit="0">0</button>
+            </div>
+            <div class="door-card-slot">
+                <div id="door-card-empty">插入门禁卡</div>
+                <div id="door-card-inserted" style="display: none;">已插入</div>
+            </div>
+            <button id="unlock-door">解锁</button>
+            <button id="close-door-panel">关闭</button>
+        </div>
+        
+        <!-- 新的门禁系统弹窗 -->
+        <div id="door-security-panel">
+            <div class="door-security-header">
+                <div>量子矩阵安全系统</div>
+                <button id="close-door-security">×</button>
+            </div>
+            <div class="door-security-content">
+                <div class="door-security-display" id="door-security-display">____</div>
+                <div class="door-security-keypad">
+                    <button class="door-security-key" data-digit="1">1</button>
+                    <button class="door-security-key" data-digit="2">2</button>
+                    <button class="door-security-key" data-digit="3">3</button>
+                    <button class="door-security-key" data-digit="4">4</button>
+                    <button class="door-security-key" data-digit="5">5</button>
+                    <button class="door-security-key" data-digit="6">6</button>
+                    <button class="door-security-key" data-digit="7">7</button>
+                    <button class="door-security-key" data-digit="8">8</button>
+                    <button class="door-security-key" data-digit="9">9</button>
+                    <button class="door-security-key" data-digit="0">0</button>
+                </div>
+                <div class="door-security-slots">
+                    <div class="door-security-slot" id="door-card-slot">
+                        <div id="door-security-card-empty">插入门禁卡</div>
+                        <div id="door-security-card-inserted" style="display: none;">已插入</div>
+                    </div>
+                    <div class="door-security-slot" id="door-device-slot">
+                        <div id="door-security-device-empty">插入破解设备</div>
+                        <div id="door-security-device-inserted" style="display: none;">已插入</div>
+                    </div>
+                </div>
+                <div class="door-security-buttons">
+                    <button class="door-security-button" id="door-security-cancel">取消</button>
+                    <button class="door-security-button" id="door-security-unlock">解锁</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="inventory">
+            <div class="inventory-slot" id="coffee-slot"></div>
+            <div class="inventory-slot" id="document-slot"></div>
+            <div class="inventory-slot" id="paper-slot"></div>
+            <div class="inventory-slot" id="keycard-slot"></div>
+            <div class="inventory-slot" id="device-slot"></div>
+            <div class="inventory-slot" id="note-slot"></div>
+            <div class="inventory-slot" id="help-slot"></div>
+        </div>
+    </div>
+    
+    <!-- 项目资料窗口 -->
+    <div id="document-info">
+        <h3>项目记录</h3>
+        <div id="document-content">
+            <p><strong>机密文件：</strong>现实重构项目概述</p>
+            <p>亲爱的新员工：</p>
+            <p>欢迎加入量子矩阵科技的"现实重构"研发团队。本文档简要介绍我们公司的核心项目。</p>
+            <p>我们的使命是通过量子计算技术改变人类感知现实的方式。该项目已经进行了2年7个月，目前处于第三阶段测试中。</p>
+            <p>项目进展：</p>
+            <ul>
+                <li>第一阶段：量子矩阵构建（已完成）</li>
+                <li>第二阶段：神经接口开发（已完成）</li>
+                <li>第三阶段：现实融合测试（进行中）</li>
+            </ul>
+            <p>你将参与的实验编号为T-<span class="highlight">27</span>，主要研究意识在量子状态下的稳定性问题。</p>
+            <p>安全提示：请务必遵守实验室安全协议，不要在未经授权的情况下接触任何设备。每天实验结束后，必须确保系统完全关闭。</p>
+            <p>首席研究员：艾伦·莱特博士</p>
+            <p>备注：如有任何异常情况，请立即联系安全部门。门禁密码每<span class="highlight">27</span>天更换一次。</p>
+        </div>
+        <button id="close-document">关闭</button>
+    </div>
+    
+    <!-- 终端界面 -->
+    <div id="terminal-screen" style="display: none;">
+        <div class="terminal-header">
+            <div>量子矩阵终端 v2.7</div>
+            <button id="close-terminal">×</button>
+        </div>
+        <div class="terminal-content">
+            <div class="terminal-line">
+                <span class="terminal-prompt">$</span> <span class="terminal-text">系统登录: 管理员</span>
+            </div>
+            <div class="terminal-line">
+                <span class="terminal-prompt">$</span> <span class="terminal-text">权限检查通过</span>
+            </div>
+            <div class="terminal-line">
+                <span class="terminal-prompt">$</span> <span class="terminal-text">欢迎来到QuantumOS v2.7.3</span>
+            </div>
+            <div class="terminal-line">
+                <span class="terminal-prompt">$</span> <span class="terminal-text">输入"help"获取可用命令</span>
+            </div>
+            <div class="terminal-line">
+                <span class="terminal-prompt">$</span> <span class="terminal-text"><span class="cursor-blink">_</span></span>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 照片查看器 -->
+    <div id="gallery-screen" style="display: none;">
+        <div class="gallery-header">
+            <div>图片库</div>
+            <button id="close-gallery">×</button>
+        </div>
+        <div class="gallery-content">
+            <div class="gallery-thumbnails">
+                <div class="gallery-thumbnail" data-image="office">办公室全景</div>
+                <div class="gallery-thumbnail" data-image="door">门禁系统</div>
+                <div class="gallery-thumbnail" data-image="breakroom">茶水间</div>
+            </div>
+            <div class="gallery-view">
+                <img id="gallery-image" src="" alt="图片预览">
+                <div id="gallery-caption">选择左侧缩略图查看图片</div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 垃圾箱界面 -->
+    <div id="trash-screen" style="display: none;">
+        <div class="trash-header">
+            <div>回收站</div>
+            <button id="close-trash">×</button>
+        </div>
+        <div class="trash-content">
+            <div class="trash-items">
+                <div class="trash-item" data-file="report1">
+                    <div class="trash-icon"></div>
+                    <div class="trash-name">实验记录.txt</div>
+                    <div class="trash-date">今天 16:45</div>
+                </div>
+                <div class="trash-item" data-file="report2">
+                    <div class="trash-icon"></div>
+                    <div class="trash-name">实验日志.txt</div>
+                    <div class="trash-date">今天 10:10</div>
+                </div>
+                <div class="trash-item" data-file="note">
+                    <div class="trash-icon"></div>
+                    <div class="trash-name">私人笔记.txt</div>
+                    <div class="trash-date">今天 10:10</div>
+                </div>
+            </div>
+            <div class="trash-preview">
+                <div id="trash-preview-header">选择文件查看内容</div>
+                <div id="trash-preview-content"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 文件夹界面 -->
+    <div id="folder-screen" style="display: none;">
+        <div class="folder-header">
+            <div>文件夹</div>
+            <button id="close-folder">×</button>
+        </div>
+        <div class="folder-content">
+            <div class="folder-files">
+                <div class="folder-file" data-file="joke">
+                    <div class="folder-file-icon"></div>
+                    <div class="folder-file-name">开发者笑话.txt</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 文件内容查看器 -->
+    <div id="file-content-screen" style="display: none;">
+        <div class="file-content-header">
+            <div id="file-content-title">文件名</div>
+            <button id="close-file-content">×</button>
+        </div>
+        <div class="file-content-text" id="file-content-text">
+            文件内容将在这里显示
+        </div>
+    </div>
+    
+    <script src="./public/js/game.js"></script>
+</body>
+</html> 
