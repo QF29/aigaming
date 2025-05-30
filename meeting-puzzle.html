@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>会议室解谜游戏</title>
+    <link rel="stylesheet" href="./public/css/styles.css">
+    <link rel="stylesheet" href="./public/css/meeting-puzzle.css">
+</head>
+<body>
+    <div class="meeting-scene-container">
+        <div id="meeting-scene">
+            <img src="./public/images/meeting.png" alt="会议室" id="meeting-bg">
+            <!-- 交互区由JS动态生成 -->
+        </div>
+        <!-- 弹窗容器 -->
+        <div id="puzzle-dialog" style="display:none;">
+            <div id="puzzle-dialog-content"></div>
+            <button id="puzzle-dialog-close">关闭</button>
+        </div>
+    </div>
+    <script src="./public/js/meeting-puzzle.js"></script>
+</body>
+</html> 
