@@ -1,0 +1,162 @@
+{
+    "gameInfo": {
+        "title": "量子矩阵",
+        "version": "1.0.0",
+        "description": "一个科幻解谜游戏，玩家需要逃离被量子实验困住的虚拟现实"
+    },
+    "scenes": {
+        "office": {
+            "name": "办公室",
+            "background": "./public/images/office.png",
+            "music": "./public/audio/background.mp3",
+            "initialDialog": "你是林默，今天是你在量子矩阵科技的第一天。奇怪的是，办公室里一个人也没有。环境很不对劲，你必须找出离开的方法。"
+        },
+        "breakroom": {
+            "name": "茶水间",
+            "background": "./public/images/breakroom.png",
+            "music": "./public/audio/background.mp3",
+            "unlockCode": "7734"
+        },
+        "gamingroom": {
+            "name": "游戏室",
+            "background": "./public/images/gamingroom.png",
+            "music": "./public/audio/game.mp3"
+        }
+    },
+    "items": {
+        "pwd1": {
+            "name": "密码纸片1",
+            "image": "./public/images/pwd1.png",
+            "letter": "A"
+        },
+        "pwd2": {
+            "name": "密码纸片2",
+            "image": "./public/images/pwd2.png",
+            "letter": "G"
+        },
+        "pwd3": {
+            "name": "密码纸片3",
+            "image": "./public/images/pwd3.png",
+            "letter": "O"
+        },
+        "pwd4": {
+            "name": "密码纸片4",
+            "image": "./public/images/pwd4.png",
+            "letter": "R"
+        },
+        "pwd5": {
+            "name": "密码纸片5",
+            "image": "./public/images/pwd5.png",
+            "letter": "A"
+        },
+        "paper": {
+            "name": "纸团",
+            "image": "./public/images/paper.png"
+        },
+        "doorcard": {
+            "name": "门禁卡",
+            "image": "./public/images/doorcard.png"
+        },
+        "device": {
+            "name": "破译器",
+            "image": "./public/images/device.png"
+        },
+        "disk": {
+            "name": "U盘",
+            "image": "./public/images/disk.png"
+        },
+        "coin": {
+            "name": "游戏币",
+            "image": "./public/images/coin.png"
+        },
+        "info1": {
+            "name": "便签",
+            "image": "./public/images/info1.png"
+        },
+        "toy": {
+            "name": "玩偶",
+            "image": "./public/images/toy.png"
+        }
+    },
+    "dialogs": {
+        "window": "窗外的城市景观看起来很奇怪，某些建筑物似乎在重复出现，就像一个循环播放的视频。这到底是怎么回事？",
+        "calendar": "当你凝视BUG时，BUG也在凝视着你",
+        "plant": "一盆健康的绿植",
+        "document": "你发现了一份项目文档，里面提到了实验编号T-27和一些奇怪的代码。",
+        "coffee": "一杯咖啡，似乎冷掉了",
+        "door_locked": "门被锁住了，需要门禁卡和某种破解设备。",
+        "door_unlocked": "使用门禁卡和破解设备试图打开门...",
+        "computer_login_success": "Hello World! 测试对象27号成功连接",
+        "computer_login_fail": "密码错误！提示：date is key",
+        "drawers_sequence": "需要按正确的顺序打开抽屉。",
+        "drawers_complete": "所有抽屉都已打开！你找到了门禁卡和一张便签。",
+        "coffee_27_brewing": "正在为测试对象27号冲泡专属咖啡...",
+        "coffee_27_ready": "咖啡已准备好！",
+        "coffee_permission_denied": "权限不足",
+        "coffee_consumed": "这咖啡有种奇怪的味道...突然间，你感觉思维更加清晰了，仿佛能看透这个虚拟世界的本质。",
+        "cabinet_locked": "打不开",
+        "microwave_error": "死锁状态：资源无法释放，等待超时",
+        "microwave_hacking": "入侵成功，正在格式化...",
+        "microwave_complete": "格式化完成！获得U盘！",
+        "sink": "我没有BUG，只是以意想不到的方式运行",
+        "fridge": "别偷我的三明治，我已经用MD5加密过了",
+        "cup_found": "你在杯子底部发现了一张密码纸片。",
+        "device_found": "你在柜子上找到了一个神秘的电子设备。",
+        "game_won": "恭喜！你获得了游戏币！",
+        "claw_ready": "准备就绪，点击开始抓取！",
+        "claw_need_coin": "请投入游戏币",
+        "claw_toy": "获得了一个玩偶！",
+        "claw_special": "这次不一样...",
+        "toy_discarded": "玩偶已丢弃",
+        "usb_inserted": "U盘已插入电脑，垃圾箱中出现了新的文件。",
+        "password_error": "密码错误！",
+        "flowerpot_paper": "你在花盆的泥土中发现了一张皱巴巴的纸团。",
+        "clock_password": "你在时钟后面发现了一张密码纸片。"
+    },
+    "passwords": {
+        "computer": "1727",
+        "breakroom": "7734",
+        "door": "4377"
+    },
+    "emails": {
+        "warning": {
+            "subject": "紧急警告",
+            "from": "S.L.",
+            "time": "今天 09:42",
+            "content": "如果你看到这条消息，说明我成功把它植入了系统。你必须小心，'现实重构'项目不是你想象的那样。我没有太多时间解释。你必须逃离这个办公室，但办公室的门被特殊的锁锁住了。茶水间有我留下的东西。P.S. 有时候生活就像CSS，看起来简单但总有一个div浮在你意想不到的地方。- S.L."
+        }
+    },
+    "terminalCommands": {
+        "help": ["ls - 列出当前目录文件", "cat [文件名] - 查看文件内容", "secret - 显示秘密信息"],
+        "ls": ["backdoor.sh"],
+        "cat backdoor.sh": ["if (input == reverse(password)) {", "  door.unlock();", "} else {", "  alarm();", "}"],
+        "secret": [
+            "[个人日志 - S.L. - 项目日第189天]",
+            "我无法继续沉默了。量子意识克隆实验已经远远超出了伦理边界。",
+            "实验主管声称这只是为了推进'永生'技术，但实际上我们是在创造可被奴役的数字意识。",
+            "测试对象27号（林默）表现出异常的自我意识。根据日志，他是第一个质疑自己处境的克隆体。",
+            "这很危险，但也给了我希望。也许他能打破这个循环。",
+            "我已经在系统中植入了几个'漏洞'，希望他能利用这些逃离。",
+            "如果你正在读这段话，林默，请记住：你所看到的世界只是代码构建的幻象。",
+            "实验室正尝试稳定你的意识模式，让你接受这个虚拟现实。抵抗它！",
+            "我的访问权限可能很快就会被发现并撤销。",
+            "如果我消失了，请记住最后一条线索：真正的出口永远藏在最显眼的地方，",
+            "就像代码中那些人人都能看到却没人注意的注释。",
+            "记住，在递归中，出口就是入口的镜像。",
+            "- S.L. (系统漏洞)"
+        ]
+    },
+    "files": {
+        "joke": "为什么程序员总是分不清万圣节和圣诞节？因为 Oct 31 == Dec 25",
+        "private_note": "这里记录了一些关于实验的机密信息..."
+    },
+    "audio": {
+        "coffee": "./public/audio/coffee.mp3",
+        "computer": "./public/audio/computer.mp3",
+        "drawers": "./public/audio/drawers.mp3",
+        "click": "./public/audio/click.mp3",
+        "coin": "./public/audio/coin.mp3",
+        "background": "./public/audio/background.mp3",
+        "game": "./public/audio/game.mp3"
+    }
+} 

@@ -1,0 +1,457 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>量子矩阵</title>
+    <link rel="stylesheet" href="./public/css/styles.css">
+</head>
+<body>
+    <div class="game-container">
+        <!-- 加载屏幕 -->
+        <div id="loading-screen" class="loading-screen">
+            <div class="loading-content">
+                <div class="game-cover" style="background-image: url('./public/images/begin.png');"></div>
+                <button id="start-game-btn" class="start-game-btn">开始游戏</button>
+            </div>
+        </div>
+
+        <!-- 主游戏界面 -->
+        <div id="game-interface" class="game-interface" style="display: none;">
+            <!-- 场景容器 -->
+            <div class="scene-container">
+                <!-- 办公室场景 -->
+                <div id="office-scene" class="scene active">
+                    <div class="scene-background" style="background-image: url('./public/images/office.png');">
+                        <!-- 可交互区域将通过JavaScript动态添加 -->
+                    </div>
+                </div>
+
+                <!-- 茶水间场景 -->
+                <div id="breakroom-scene" class="scene">
+                    <div class="scene-background" style="background-image: url('./public/images/breakroom.png');">
+                        <!-- 可交互区域将通过JavaScript动态添加 -->
+                    </div>
+                </div>
+
+                <!-- 游戏室场景 -->
+                <div id="gamingroom-scene" class="scene">
+                    <div class="scene-background" style="background-image: url('./public/images/gamingroom.png');">
+                        <!-- 可交互区域将通过JavaScript动态添加 -->
+                    </div>
+                </div>
+
+                <!-- 场景切换箭头 -->
+                <div class="scene-navigation">
+                    <button id="prev-scene" class="scene-arrow left" style="display: none;">‹</button>
+                    <button id="next-scene" class="scene-arrow right">›</button>
+                </div>
+            </div>
+
+            <!-- 物品栏 -->
+            <div id="inventory" class="inventory">
+                <div class="inventory-title">物品栏</div>
+                <div class="inventory-slots">
+                    <!-- 物品栏插槽将通过JavaScript动态添加 -->
+                </div>
+            </div>
+
+            <!-- 对话框 -->
+            <div id="dialog-box" class="dialog-box" style="display: none;">
+                <div class="dialog-content">
+                    <p id="dialog-text"></p>
+                </div>
+            </div>
+
+            <!-- 音频控制 -->
+            <audio id="background-audio" loop>
+                <source src="./public/audio/background.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="coffee-audio">
+                <source src="./public/audio/coffee.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="computer-audio">
+                <source src="./public/audio/computer.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="drawers-audio">
+                <source src="./public/audio/drawers.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="click-audio">
+                <source src="./public/audio/click.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="coin-audio">
+                <source src="./public/audio/coin.mp3" type="audio/mpeg">
+            </audio>
+            <audio id="game-audio" loop>
+                <source src="./public/audio/game.mp3" type="audio/mpeg">
+            </audio>
+
+            <!-- 调试信息面板 -->
+            <div id="debug-info" class="debug-info">
+                <h4>调试模式</h4>
+                <div class="info-line">
+                    <span>选中区域:</span>
+                    <span id="debug-selected">无</span>
+                </div>
+                <div class="info-line">
+                    <span>X坐标:</span>
+                    <span id="debug-x">-</span>
+                </div>
+                <div class="info-line">
+                    <span>Y坐标:</span>
+                    <span id="debug-y">-</span>
+                </div>
+                <div class="info-line">
+                    <span>宽度:</span>
+                    <span id="debug-width">-</span>
+                </div>
+                <div class="info-line">
+                    <span>高度:</span>
+                    <span id="debug-height">-</span>
+                </div>
+                <div class="controls">
+                    <div><strong>控制说明:</strong></div>
+                    <div>D - 切换调试模式</div>
+                    <div>点击 - 选择区域/图标</div>
+                    <div>↑↓←→ - 移动区域/图标</div>
+                    <div>Shift+↑↓←→ - 调整大小</div>
+                    <div>Tab - 切换下一个区域/图标</div>
+                    <div>C - 复制坐标到控制台</div>
+                    <div><strong>保存功能:</strong></div>
+                    <div>S - 保存坐标(场景/桌面)</div>
+                    <div>R - 重置为原始坐标</div>
+                    <div>E - 导出所有场景数据</div>
+                    <div>Esc - 取消选择</div>
+                    <div><strong>桌面图标:</strong></div>
+                    <div>在电脑桌面上可调试图标</div>
+                    <div>黄色边框表示选中的图标</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 弹窗界面 -->
+        <!-- 电脑界面 -->
+        <div id="computer-modal" class="modal">
+            <div class="modal-content computer-screen">
+                <div class="computer-header">
+                    <span>量子矩阵终端 v2.7.3</span>
+                    <button class="close-btn" onclick="closeModal('computer-modal')">&times;</button>
+                </div>
+                <div class="computer-content" id="computer-content">
+                    <!-- 登录界面 -->
+                    <div id="computer-login" class="computer-interface login-interface">
+                        <div class="login-background">
+                            <div class="matrix-rain"></div>
+                            <div class="circuit-overlay"></div>
+                            <div class="scan-line"></div>
+                        </div>
+                        
+                        <div class="login-container">
+                            <div class="system-header">
+                                <div class="system-logo">
+                                    <span class="logo-text">◊ QUANTUM MATRIX ◊</span>
+                                    <div class="version-info">SECURITY TERMINAL v2.7.3</div>
+                                </div>
+                                <div class="status-indicators">
+                                    <span class="status-dot active"></span>
+                                    <span class="status-dot"></span>
+                                    <span class="status-dot active"></span>
+                                </div>
+                            </div>
+                            
+                            <div class="authentication-panel">
+                                <div class="auth-header">
+                                    <h3 class="auth-title">身份验证协议</h3>
+                                    <div class="security-level">安全等级: [机密]</div>
+                                </div>
+                                
+                                <div class="biometric-scanner">
+                                    <div class="scanner-frame">
+                                        <div class="scanner-grid"></div>
+                                        <div class="scanner-beam"></div>
+                                    </div>
+                                    <p class="scanner-status">生物识别已启用 - 等待密码验证</p>
+                                </div>
+                                
+                                <div class="password-input-section">
+                                    <label class="input-label">
+                                        <span class="label-text">访问密钥 [4位数字]</span>
+                                        <div class="input-wrapper">
+                                            <input type="password" 
+                                                   id="computer-password" 
+                                                   maxlength="4" 
+                                                   placeholder="••••"
+                                                   class="quantum-input">
+                                            <div class="input-scanner"></div>
+                                        </div>
+                                    </label>
+                                    
+                                    <button onclick="loginComputer()" class="quantum-button">
+                                        <span class="button-text">验证访问权限</span>
+                                        <div class="button-glow"></div>
+                                    </button>
+                                </div>
+                                
+                                <div class="system-hints">
+                                    <div class="hint-item">
+                                        <span class="hint-icon">⚠</span>
+                                        <span class="hint-text">密码遗忘？时间是关键</span>
+                                    </div>
+                                    <div class="access-attempts">
+                                        <span>剩余尝试次数: <span class="attempts-count">∞</span></span>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="system-footer">
+                                <div class="encryption-status">
+                                    <span class="encryption-icon">🔐</span>
+                                    <span>256位量子加密已启用</span>
+                                </div>
+                                <div class="connection-info">
+                                    <span class="signal-strength">信号强度: ████████ 100%</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 桌面界面 -->
+                    <div id="computer-desktop" class="computer-interface" style="display: none;">
+                        <div class="desktop-background" style="background-image: url('./public/images/computer_desk.png');">
+                            <div class="desktop-icon" data-app="email" style="left: 110px; top: 105px; width: 120px; height: 125px;"></div>
+                            <div class="desktop-icon" data-app="folder" style="left: 405px; top: 85px; width: 255px; height: 170px;"></div>
+                            <div class="desktop-icon" data-app="gallery" style="left: 755px; top: 85px; width: 260px; height: 155px;"></div>
+                            <div class="desktop-icon" data-app="trash" style="left: 200px; top: 380px; width: 200px; height: 205px;"></div>
+                            <div class="desktop-icon" data-app="terminal" style="left: 620px; top: 365px; width: 270px; height: 160px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- 应用界面 -->
+                    <div id="computer-app" class="computer-interface" style="display: none;">
+                        <!-- <button class="back-btn" onclick="showDesktop()">← 返回桌面</button> -->
+                        <div id="app-content"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 密码锁界面 -->
+        <div id="password-modal" class="modal">
+            <div class="modal-content password-panel">
+                <div class="password-header">
+                    <span id="password-title">输入密码</span>
+                    <button class="close-btn" onclick="closeModal('password-modal')">&times;</button>
+                </div>
+                <div class="password-content">
+                    <div class="password-display" id="password-display">****</div>
+                    <div class="password-keypad">
+                        <button onclick="addDigit('1')">1</button>
+                        <button onclick="addDigit('2')">2</button>
+                        <button onclick="addDigit('3')">3</button>
+                        <button onclick="addDigit('4')">4</button>
+                        <button onclick="addDigit('5')">5</button>
+                        <button onclick="addDigit('6')">6</button>
+                        <button onclick="addDigit('7')">7</button>
+                        <button onclick="addDigit('8')">8</button>
+                        <button onclick="addDigit('9')">9</button>
+                        <button onclick="clearPassword()">清除</button>
+                        <button onclick="addDigit('0')">0</button>
+                        <button onclick="confirmPassword()">确认</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 图片查看器 -->
+        <div id="image-modal" class="modal">
+            <div class="modal-content image-viewer">
+                <div class="image-header">
+                    <h3 id="image-title">图片预览</h3>
+                    <button class="close-btn" onclick="closeModal('image-modal')">&times;</button>
+                </div>
+                <div class="image-content">
+                    <img id="modal-image" src="" alt="">
+                    <div class="image-controls">
+                        <button id="flip-button" onclick="flipImage()" style="display: none;">反转</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 咖啡机界面 -->
+        <div id="coffee-modal" class="modal">
+            <div class="modal-content coffee-machine">
+                <div class="coffee-header">
+                    <span>Stackoverflow咖啡机</span>
+                    <button class="close-btn" onclick="closeModal('coffee-modal')">&times;</button>
+                </div>
+                <div class="coffee-content">
+                    <p>请选择您的咖啡配方：</p>
+                    <div class="coffee-options">
+                        <button onclick="selectCoffee('hello-world')">☕ Hello World特调</button>
+                        <button onclick="selectCoffee('404')">☕ 404未找到</button>
+                        <button onclick="selectCoffee('bug-fix')">☕ Bug修复师最爱</button>
+                        <button onclick="selectCoffee('stack-overflow')">☕ Stack overflow</button>
+                        <button onclick="selectCoffee('27-special')">☕ 27号实验体专属</button>
+                    </div>
+                    <div id="coffee-status" class="coffee-status"></div>
+                    <button id="drink-coffee" onclick="drinkCoffee()" style="display: none;">喝下咖啡</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 微波炉界面 -->
+        <div id="microwave-modal" class="modal">
+            <div class="modal-content microwave-panel">
+                <div class="microwave-header">
+                    <span>智能微波炉</span>
+                    <button class="close-btn" onclick="closeModal('microwave-modal')">&times;</button>
+                </div>
+                <div class="microwave-content">
+                    <div class="microwave-display">死锁状态：资源无法释放，等待超时</div>
+                    <div class="microwave-status" id="microwave-status"></div>
+                    <div class="microwave-progress" id="microwave-progress" style="display: none;">
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="progress-fill"></div>
+                        </div>
+                        <span id="progress-text">0%</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 相框界面 -->
+        <div id="photo-modal" class="modal">
+            <div class="modal-content photo-frame">
+                <div class="photo-header">
+                    <button class="close-btn" onclick="closeModal('photo-modal')">&times;</button>
+                </div>
+                <div class="photo-content">
+                    <div class="photo-background" style="background-image: url('./public/images/photo.png');">
+                        <div class="agora-letters" id="agora-letters">
+                            <!-- Agora字母将动态添加 -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 三消游戏界面 -->
+        <div id="match3-modal" class="modal">
+            <div class="modal-content match3-game">
+                <div class="game-header">
+                    <span>经典三消游戏</span>
+                    <span class="score">得分: <span id="game-score">0</span></span>
+                    <button class="close-btn" onclick="closeModal('match3-modal')">&times;</button>
+                </div>
+                <div class="game-board" id="match3-board">
+                    <!-- 游戏格子将动态生成 -->
+                </div>
+                <div class="game-status" id="game-status"></div>
+            </div>
+        </div>
+
+        <!-- 抓娃娃机界面 -->
+        <div id="claw-modal" class="modal">
+            <div class="modal-content claw-machine">
+                <div class="claw-header">
+                    <span>抓娃娃机</span>
+                    <button class="close-btn" onclick="closeModal('claw-modal')">&times;</button>
+                </div>
+                <div class="claw-content">
+                    <div class="claw-display" id="claw-display">
+                        <div class="claw-status" id="claw-status">请投入游戏币</div>
+                        <div class="claw-result" id="claw-result"></div>
+                    </div>
+                    <button id="claw-play" onclick="playClaw()" disabled>开始抓取</button>
+                    <button id="discard-toy" onclick="discardToy()" style="display: none;">丢弃</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 门禁系统界面 -->
+        <div id="door-access-modal" class="modal">
+            <div class="modal-content door-access-panel">
+                <div class="door-header">
+                    <div class="system-logo">
+                        <span class="logo-icon">🔐</span>
+                        <span class="logo-text">量子锁安全系统</span>
+                    </div>
+                    <div class="system-status">
+                        <span class="status-indicator active"></span>
+                        <span>系统在线</span>
+                    </div>
+                </div>
+                
+                <div class="door-content">
+                    <div class="access-title">
+                        <h2>身份验证</h2>
+                        <p class="access-subtitle">请输入解锁密钥以获得访问权限</p>
+                    </div>
+                    
+                    <div class="biometric-scanner">
+                        <div class="scanner-frame">
+                            <div class="scanner-beam"></div>
+                            <div class="scanner-grid">
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                                <div class="grid-line"></div>
+                            </div>
+                        </div>
+                        <div class="scanner-status">生物识别: 已验证 ✓</div>
+                    </div>
+                    
+                    <div class="password-section">
+                        <label class="password-label">
+                            <span class="label-text">最终访问密钥</span>
+                            <div class="input-container">
+                                <input type="text" 
+                                       id="door-password-input" 
+                                       placeholder="输入密钥..."
+                                       maxlength="10"
+                                       class="quantum-password-input">
+                                <div class="input-glow"></div>
+                            </div>
+                        </label>
+                        
+                        <div class="error-display" id="door-access-error" style="display: none;"></div>
+                        
+                        <button onclick="verifyDoorAccess()" class="access-button">
+                            <span class="button-icon">🚀</span>
+                            <span class="button-text">验证访问权限</span>
+                            <div class="button-particles"></div>
+                        </button>
+                    </div>
+                    
+                    <div class="security-info">
+                        <div class="info-item">
+                            <span class="info-icon">🛡️</span>
+                            <span>多重加密保护</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-icon">⚡</span>
+                            <span>量子纠缠验证</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-icon">🔬</span>
+                            <span>神经网络分析</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="system-footer">
+                    <div class="footer-info">
+                        <span>QuantumMatrix Security Protocol v2.7</span>
+                        <span class="footer-separator">|</span>
+                        <span>访问等级: RESTRICTED</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="./public/js/game.js"></script>
+</body>
+</html> 

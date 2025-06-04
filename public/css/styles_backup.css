@@ -1,0 +1,548 @@
+/* 基础样式 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Courier New', monospace;
+    background: linear-gradient(45deg, #0a0e17, #1a1a2e);
+    color: #e5d3b3;
+    overflow: hidden;
+    height: 100vh;
+    user-select: none;
+}
+
+/* 游戏容器 - 桌面端优化 */
+.game-container {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    min-width: 1024px;
+    min-height: 768px;
+}
+
+/* 加载屏幕 */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(45deg, #0a0e17, #1a1a2e);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loading-content {
+    text-align: center;
+    animation: fadeIn 2s ease-in;
+}
+
+.game-cover {
+    width: 400px;
+    height: 250px;
+    background: url('../images/begin.png') center/cover;
+    border-radius: 10px;
+    margin-bottom: 30px;
+    box-shadow: 0 0 30px rgba(201, 176, 55, 0.3);
+}
+
+.start-game-btn {
+    background: linear-gradient(135deg, #9a7b4f, #c9b037);
+    border: none;
+    color: #1a1a2e;
+    padding: 15px 40px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    box-shadow: 0 4px 15px rgba(201, 176, 55, 0.3);
+}
+
+.start-game-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(201, 176, 55, 0.5);
+    background: linear-gradient(135deg, #c9b037, #9a7b4f);
+}
+
+.loading-content h1 {
+    color: #c9b037;
+    font-size: 2.5em;
+    margin-bottom: 20px;
+    text-shadow: 0 0 20px rgba(201, 176, 55, 0.5);
+}
+
+.loading-bar {
+    width: 300px;
+    height: 4px;
+    background: rgba(154, 123, 79, 0.3);
+    margin: 20px auto;
+    border-radius: 2px;
+    overflow: hidden;
+}
+
+.loading-progress {
+    height: 100%;
+    background: linear-gradient(90deg, #9a7b4f, #c9b037);
+    width: 0%;
+    animation: loadProgress 3s ease-out infinite;
+}
+
+/* 游戏界面 */
+.game-interface {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    position: relative;
+}
+
+/* 场景容器 */
+.scene-container {
+    flex: 1;
+    position: relative;
+    background: #111;
+    border: 2px solid #9a7b4f;
+    margin: 10px;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.scene {
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.scene.active {
+    opacity: 1;
+}
+
+.scene-background {
+    width: 100%;
+    height: 100%;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+}
+
+/* 交互区域 */
+.interactive-area {
+    position: absolute;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
+    z-index: 10;
+    transform-origin: center;
+}
+
+.interactive-area:hover {
+    border-color: rgba(154, 123, 79, 0.8);
+    box-shadow: 0 0 20px rgba(154, 123, 79, 0.5);
+    background: rgba(154, 123, 79, 0.15);
+}
+
+/* 调试模式 */
+.debug-mode .interactive-area {
+    border-color: rgba(255, 0, 0, 0.8) !important;
+    background: rgba(255, 0, 0, 0.1) !important;
+}
+
+.debug-mode .interactive-area::after {
+    content: attr(data-name);
+    position: absolute;
+    top: -25px;
+    left: 0;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 2px 6px;
+    font-size: 12px;
+    border-radius: 3px;
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+.debug-mode .desktop-icon {
+    border: 2px solid rgba(0, 255, 0, 0.8) !important;
+    background: rgba(0, 255, 0, 0.1) !important;
+}
+
+.debug-mode .desktop-icon::after {
+    content: attr(data-app);
+    position: absolute;
+    top: -25px;
+    left: 0;
+    background: rgba(0, 100, 0, 0.8);
+    color: #fff;
+    padding: 2px 6px;
+    font-size: 12px;
+    border-radius: 3px;
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+.debug-mode .interactive-area.selected {
+    border-color: rgba(255, 255, 0, 1) !important;
+    background: rgba(255, 255, 0, 0.2) !important;
+}
+
+.debug-mode .interactive-area.selected::after {
+    background: rgba(100, 100, 0, 0.9);
+    color: #fff;
+}
+
+.debug-mode .desktop-icon.selected {
+    border-color: rgba(255, 255, 0, 1) !important;
+    background: rgba(255, 255, 0, 0.2) !important;
+}
+
+.debug-mode .desktop-icon.selected::after {
+    background: rgba(100, 100, 0, 0.9);
+    color: #fff;
+}
+
+.debug-info {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    padding: 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    z-index: 1001;
+    display: none;
+    min-width: 200px;
+}
+
+.debug-mode .debug-info {
+    display: block;
+}
+
+.debug-info h4 {
+    margin-bottom: 5px;
+    color: #ffff00;
+}
+
+.debug-info .info-line {
+    margin: 2px 0;
+}
+
+.debug-info .controls {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid #666;
+    font-size: 10px;
+}
+
+.debug-info .controls div {
+    margin: 1px 0;
+}
+
+/* 场景导航 */
+.scene-navigation {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 20px;
+    z-index: 100;
+}
+
+.scene-arrow {
+    background: rgba(154, 123, 79, 0.8);
+    border: 2px solid #c9b037;
+    color: #e5d3b3;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 20px;
+    transition: all 0.3s ease;
+}
+
+.scene-arrow:hover {
+    background: rgba(201, 176, 55, 0.9);
+    transform: scale(1.1);
+    box-shadow: 0 0 15px rgba(201, 176, 55, 0.5);
+}
+
+.scene-arrow:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 物品栏 */
+.inventory {
+    width: 200px;
+    background: rgba(26, 26, 46, 0.9);
+    border: 2px solid #9a7b4f;
+    border-radius: 8px;
+    margin: 10px;
+    padding: 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+.inventory-title {
+    color: #c9b037;
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 15px;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.inventory-slots {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 8px;
+}
+
+.inventory-slot {
+    width: 80px;
+    height: 80px;
+    border: 2px solid #9a7b4f;
+    border-radius: 6px;
+    background: rgba(15, 15, 25, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.inventory-slot:hover {
+    border-color: #c9b037;
+    box-shadow: 0 0 10px rgba(201, 176, 55, 0.3);
+}
+
+.inventory-slot.has-item {
+    background: rgba(154, 123, 79, 0.2);
+}
+
+.item-icon {
+    width: 60px;
+    height: 60px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.inventory-slot.selected-item {
+    border-color: #c9b037;
+    box-shadow: 0 0 15px rgba(201, 176, 55, 0.6);
+    animation: selectedGlow 1.5s ease-in-out infinite alternate;
+}
+
+@keyframes selectedGlow {
+    from {
+        box-shadow: 0 0 15px rgba(201, 176, 55, 0.6);
+    }
+    to {
+        box-shadow: 0 0 25px rgba(201, 176, 55, 0.9);
+    }
+}
+
+/* 对话框 */
+.dialog-box {
+    position: fixed;
+    bottom: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(26, 26, 46, 0.95);
+    border: 2px solid #9a7b4f;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 600px;
+    color: #e5d3b3;
+    z-index: 1000;
+    display: none;
+}
+
+.dialog-content p {
+    margin: 0;
+    line-height: 1.5;
+    font-size: 16px;
+}
+
+.dialog-close {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: #9a7b4f;
+    font-size: 20px;
+    cursor: pointer;
+    transition: color 0.3s ease;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.dialog-close:hover {
+    color: #c9b037;
+}
+
+/* 模态框 */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 2000;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.modal.active {
+    opacity: 1;
+    pointer-events: all;
+}
+
+.modal-content {
+    background: rgba(26, 26, 46, 0.95);
+    border: 2px solid #9a7b4f;
+    border-radius: 10px;
+    padding: 20px;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow-y: auto;
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: #9a7b4f;
+    font-size: 24px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.close-btn:hover {
+    color: #c9b037;
+    background: rgba(154, 123, 79, 0.2);
+    transform: rotate(90deg);
+}
+
+/* 其他样式保持原样 */
+.computer-screen, .password-panel, .desktop-background, .image-viewer,
+.coffee-machine, .microwave-panel, .photo-frame, .match3-game,
+.claw-machine, .email-content, .gallery-content, .trash-content,
+.folder-content, .text-viewer, .terminal-content, .door-access-panel,
+.victory-screen, .login-interface {
+    /* 这些组件的样式保持不变，只是在此处引用 */
+}
+
+/* 滚动条样式 */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(154, 123, 79, 0.2);
+}
+
+::-webkit-scrollbar-thumb {
+    background: #9a7b4f;
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #c9b037;
+}
+
+/* 动画 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes loadProgress {
+    0% { width: 0%; }
+    50% { width: 70%; }
+    100% { width: 100%; }
+}
+
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 5px rgba(201, 176, 55, 0.5); }
+    50% { box-shadow: 0 0 20px rgba(201, 176, 55, 0.8); }
+}
+
+/* 桌面端响应式优化 */
+@media (min-width: 1920px) {
+    .game-container {
+        max-width: 1920px;
+        max-height: 1080px;
+        margin: 0 auto;
+    }
+}
+
+@media (max-width: 1366px) {
+    .inventory {
+        width: 180px;
+    }
+    
+    .inventory-slot {
+        width: 70px;
+        height: 70px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .modal-content {
+        transform: scale(0.9);
+    }
+    
+    .inventory {
+        width: 160px;
+    }
+    
+    .inventory-slot {
+        width: 65px;
+        height: 65px;
+    }
+} 

@@ -8,10 +8,12 @@
 </head>
 <body>
     <div class="scene-container">
+        <!-- 对话框移动到这里，确保在所有场景下都能显示 -->
+        <div id="dialog-box"></div>
+        
         <div id="office-scene-container">
             <div id="office-scene">
                 <!-- 可交互区域将通过JavaScript动态添加 -->
-                <div id="dialog-box"></div>
                 <div id="game-tips">提示：右键点击帮助按钮(?)可重置游戏进度</div>
             </div>
             
@@ -23,7 +25,7 @@
             <!-- 场景切换按钮 -->
             <div id="scene-transition" style="display: none;">
                 <button id="go-to-breakroom">前往茶水间</button>
-                <button id="go-to-office" style="display: none;">返回办公室</button>
+                <button id="go-to-office" style="display: none;">前往办公室</button>
             </div>
         </div>
         
@@ -53,7 +55,7 @@
                         <input type="text" class="password-digit" maxlength="1" data-index="3">
                     </div>
                     <button id="login-button">验证</button>
-                    <div class="login-help">忘记密码？试试"已尝试关闭并重新打开"</div>
+                    <div class="login-help">忘记密码？date is key"</div>
                 </div>
             </div>
             
