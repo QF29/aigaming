@@ -3579,6 +3579,12 @@ Dr. M.
             currentScene.classList.remove('active');
         }
         
+        // 隐藏场景导航按钮
+        const sceneNavigation = document.querySelector('.scene-navigation');
+        if (sceneNavigation) {
+            sceneNavigation.style.display = 'none';
+        }
+        
         // 创建大厅场景
         const hallScene = document.createElement('div');
         hallScene.className = 'scene active';
@@ -3609,7 +3615,7 @@ Dr. M.
         // 播放背景音乐
         this.playBackgroundMusic();
         
-        // 3秒后隐藏提示信息
+        // 5秒后隐藏提示信息
         setTimeout(() => {
             const infoPanel = hallScene.querySelector('div[style*="position: absolute"]');
             if (infoPanel) {

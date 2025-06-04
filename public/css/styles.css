@@ -864,21 +864,26 @@ body {
 
 .quantum-input {
     width: 100%;
-    padding: 15px;
-    font-size: 18px;
-    background: rgba(0, 0, 0, 0.7);
+    padding: 18px 20px;
+    font-size: 20px;
+    background: rgba(0, 0, 0, 0.85);
     border: 2px solid #9a7b4f;
-    border-radius: 8px;
+    border-radius: 12px;
     color: #c9b037;
     text-align: center;
     font-family: 'Courier New', monospace;
-    letter-spacing: 5px;
+    letter-spacing: 6px;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3), 0 0 20px rgba(154, 123, 79, 0.1);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .quantum-input:focus {
     outline: none;
     border-color: #c9b037;
-    box-shadow: 0 0 15px rgba(201, 176, 55, 0.3);
+    background: rgba(0, 0, 0, 0.9);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.4), 0 0 25px rgba(201, 176, 55, 0.4), 0 0 40px rgba(201, 176, 55, 0.2);
+    transform: translateY(-1px);
 }
 
 .quantum-button {
