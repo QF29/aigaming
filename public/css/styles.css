@@ -1410,6 +1410,19 @@ body {
     font-weight: bold;
     border-radius: 10px 10px 0 0;
     margin: -20px -20px 20px -20px;
+    position: relative;
+}
+
+/* 游戏计分居中样式 */
+.game-header .score {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(154, 123, 79, 0.3);
+    padding: 6px 12px;
+    border-radius: 15px;
+    border: 1px solid #9a7b4f;
+    font-size: 16px;
 }
 
 .coffee-content, .microwave-content, .photo-content, .claw-content {

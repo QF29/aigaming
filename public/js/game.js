@@ -1754,6 +1754,13 @@ S.L. (System Leak)
     }
     
     // 三消游戏逻辑
+    updateGameScore() {
+        const scoreElement = document.getElementById('game-score');
+        if (scoreElement) {
+            scoreElement.textContent = `${this.gameScore}/10`;
+        }
+    }
+
     initMatch3Game() {
         const board = document.getElementById('match3-board');
         const score = document.getElementById('game-score');
@@ -1801,7 +1808,8 @@ S.L. (System Leak)
             board.appendChild(cell);
         }
         
-        score.textContent = this.gameScore;
+        // 使用新的计分显示格式
+        this.updateGameScore();
         console.log('✅ 三消游戏已初始化，8x8游戏板，64个格子');
         
         // 启动持续的自动消除检查
@@ -1905,7 +1913,7 @@ S.L. (System Leak)
                         // 有匹配，移除匹配的格子并获得分数（只有玩家操作才计分）
                         this.removeMatches(matches, true); // true表示计分
                         this.gameScore += 1; // 每完成一次三消获得1分
-                        document.getElementById('game-score').textContent = this.gameScore;
+                        this.updateGameScore();
                         
                         // 检查是否获胜
                         if (this.gameScore >= 10) { // 降低获胜分数到10分
@@ -1975,17 +1983,23 @@ S.L. (System Leak)
         }, 300);
     }
     
-    updateBoardDisplay(withFallAnimation = false) {
+    updateBoardDisplay(withFallAnimation = false, columnsToUpdate = null) {
         const colors = ['🔴', '🟡', '🔵', '🟢', '🟣'];
         const cells = document.querySelectorAll('.game-cell');
         
         cells.forEach((cell, index) => {
             const row = Math.floor(index / 8);
             const col = index % 8;
+            
+            // 如果指定了要更新的列，只更新这些列
+            if (columnsToUpdate && !columnsToUpdate.has(col)) {
+                return;
+            }
+            
             cell.textContent = colors[this.gameBoard[row][col]];
             
             // 如果需要下落动画，为新生成的格子添加动画
-            if (withFallAnimation && row <= 2) { // 只对上面几行添加下落动画
+            if (withFallAnimation && columnsToUpdate && columnsToUpdate.has(col) && row <= 2) {
                 cell.classList.add('falling');
                 setTimeout(() => {
                     cell.classList.remove('falling');
@@ -2061,13 +2075,15 @@ S.L. (System Leak)
         
         // 等待动画完成后处理数据
         setTimeout(() => {
-            // 标记要移除的格子
+            // 标记要移除的格子并收集受影响的列
+            const affectedColumns = new Set();
             matches.forEach(match => {
                 this.gameBoard[match.row][match.col] = -1; // 标记为空
+                affectedColumns.add(match.col);
             });
             
-            // 让上面的格子掉下来
-            for (let col = 0; col < 8; col++) {
+            // 只处理受影响的列
+            for (let col of affectedColumns) {
                 let writeIndex = 7;
                 for (let row = 7; row >= 0; row--) {
                     if (this.gameBoard[row][col] !== -1) {
@@ -2085,8 +2101,8 @@ S.L. (System Leak)
                 }
             }
             
-            // 更新显示并添加下落动画
-            this.updateBoardDisplay(true);
+            // 只更新受影响的列并添加下落动画
+            this.updateBoardDisplay(true, affectedColumns);
             
             // 移除匹配动画类
             matches.forEach(match => {
