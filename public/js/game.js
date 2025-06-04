@@ -13,7 +13,17 @@ class QuantumMatrixGame {
             hasViewedTerminal: false,
             hasViewedTrash: false,
             usbInserted: false,
-            inventory: {}
+            inventory: {},
+            // 会议室相关状态
+            conferenceReplayActive: false,
+            conferenceAbnormalState: false,
+            conferenceAnomaliesFound: {
+                clock: false,
+                whiteboard: false,
+                cup: false
+            },
+            conferenceAllAnomaliesFound: false,
+            conferenceVisited: false
         };
         this.inventory = [];
         this.dialogTimer = null; // 添加对话框定时器
@@ -30,7 +40,7 @@ class QuantumMatrixGame {
         this.offsetY = 0;
         this.selectedDesktopIcon = null;
         
-        this.scenes = ['office-scene', 'breakroom-scene', 'gamingroom-scene'];
+        this.scenes = ['office-scene', 'breakroom-scene', 'gamingroom-scene', 'conference-scene'];
         this.currentSceneIndex = 0;
         
         this.gameState.currentPassword = '';
@@ -576,6 +586,9 @@ class QuantumMatrixGame {
             case 'gamingroom-scene':
                 this.createGamingroomInteractives(sceneBackground);
                 break;
+            case 'conference-scene':
+                this.createConferenceInteractives(sceneBackground);
+                break;
         }
     }
     
@@ -644,6 +657,21 @@ class QuantumMatrixGame {
         const baseAreas = [
             { name: 'game-machine', x: 710, y: 460, width: 235, height: 105, action: () => this.openGameMachine() },
             { name: 'claw-machine', x: 1120, y: 168, width: 300, height: 637, action: () => this.openClawMachine() }
+        ];
+        
+        // 转换为缩放后的坐标
+        const scaledAreas = baseAreas.map(area => ({
+            ...area,
+            ...this.scaleCoordinate(area.x, area.y, area.width, area.height)
+        }));
+        
+        this.createAreasFromConfig(container, scaledAreas);
+    }
+    
+    createConferenceInteractives(container) {
+        // 使用基准坐标定义热区 - 根据用户需求设置正确的坐标
+        const baseAreas = [
+            { name: 'tv', x: 1211, y: 112, width: 401, height: 280, action: () => this.openConferenceTV() }
         ];
         
         // 转换为缩放后的坐标
@@ -776,6 +804,14 @@ class QuantumMatrixGame {
         
         // 切换背景音乐
         this.switchBackgroundMusic();
+        
+        // 显示场景初始对话
+        setTimeout(() => {
+            if (sceneName === 'conference-scene' && !this.gameState.conferenceVisited) {
+                this.showDialog("这里似乎有什么不对劲...试试查看会议录像");
+                this.gameState.conferenceVisited = true;
+            }
+        }, 500);
     }
     
     updateNavigationButtons() {
@@ -4266,6 +4302,210 @@ Dr. M.
             this.previewImage(this.selectedImageSrc, this.selectedImageTitle);
         }
     }
+
+    // 会议室交互
+    openConferenceTV() {
+        this.showModal('conference-modal');
+        this.gameState.conferenceReplayActive = true;
+        this.setupConferenceReplay();
+    }
+    
+    setupConferenceReplay() {
+        // 重置状态
+        this.gameState.conferenceAbnormalState = false;
+        
+        // 更新按钮状态
+        const normalBtn = document.getElementById('normal-state-btn');
+        const abnormalBtn = document.getElementById('abnormal-state-btn');
+        const conferenceScreen = document.getElementById('conference-screen');
+        
+        normalBtn.classList.add('active');
+        abnormalBtn.classList.remove('active');
+        
+        // 设置初始背景为正常状态
+        conferenceScreen.style.backgroundImage = "url('./public/images/conference.png')";
+        
+        // 隐藏异常计数器
+        document.getElementById('anomaly-counter').style.display = 'none';
+        
+        // 清除之前的异常区域
+        this.clearAnomalyAreas();
+        
+        // 更新状态消息
+        document.getElementById('conference-status').textContent = "正在加载会议录像...检测到时间线异常";
+        document.getElementById('conference-message').textContent = "";
+    }
+    
+    switchConferenceState(state) {
+        console.log(`🎬 切换会议录像状态到: ${state}`);
+        
+        const normalBtn = document.getElementById('normal-state-btn');
+        const abnormalBtn = document.getElementById('abnormal-state-btn');
+        const conferenceScreen = document.getElementById('conference-screen');
+        const anomalyCounter = document.getElementById('anomaly-counter');
+        
+        if (state === 'normal') {
+            this.gameState.conferenceAbnormalState = false;
+            normalBtn.classList.add('active');
+            abnormalBtn.classList.remove('active');
+            conferenceScreen.style.backgroundImage = "url('./public/images/conference.png')";
+            anomalyCounter.style.display = 'none';
+            this.clearAnomalyAreas();
+            console.log('✅ 切换到正常状态');
+        } else if (state === 'abnormal') {
+            this.gameState.conferenceAbnormalState = true;
+            normalBtn.classList.remove('active');
+            abnormalBtn.classList.add('active');
+            conferenceScreen.style.backgroundImage = "url('./public/images/conference_abnormal.png')";
+            anomalyCounter.style.display = 'block';
+            this.createAnomalyAreas();
+            this.updateAnomalyCounter();
+            console.log('✅ 切换到异常状态');
+        } else {
+            console.error('❌ 未知的状态:', state);
+        }
+    }
+    
+    createAnomalyAreas() {
+        const conferenceScreen = document.getElementById('conference-screen');
+        
+        // 清除现有的异常区域
+        this.clearAnomalyAreas();
+        
+        console.log('🎯 创建异常检测区域');
+        
+        // 获取会议室屏幕的实际尺寸
+        const screenRect = conferenceScreen.getBoundingClientRect();
+        const screenWidth = screenRect.width;
+        const screenHeight = screenRect.height;
+        
+        console.log(`📐 会议室屏幕尺寸: ${screenWidth}x${screenHeight}`);
+        
+        // 基础图片尺寸 (假设异常图片原始尺寸)
+        const baseWidth = 1920;
+        const baseHeight = 1080;
+        
+        // 计算缩放比例 (使用contain模式的缩放逻辑)
+        const scaleX = screenWidth / baseWidth;
+        const scaleY = screenHeight / baseHeight;
+        const scale = Math.min(scaleX, scaleY);
+        
+        // 计算居中偏移
+        const scaledWidth = baseWidth * scale;
+        const scaledHeight = baseHeight * scale;
+        const offsetX = (screenWidth - scaledWidth) / 2;
+        const offsetY = (screenHeight - scaledHeight) / 2;
+        
+        console.log(`🔧 缩放比例: ${scale.toFixed(3)}, 偏移: ${offsetX.toFixed(1)},${offsetY.toFixed(1)}`);
+        
+        // 异常区域坐标（根据用户需求）
+        const anomalies = [
+            { 
+                id: 'clock', 
+                x: 370, y: 50, width: 150, height: 70,
+                message: "时间在量子系统中不是线性的，会议可能从未发生过"
+            },
+            { 
+                id: 'whiteboard', 
+                x: 100, y: 390, width: 235, height: 25,
+                message: "会议的真正议题被暴露了"
+            },
+            { 
+                id: 'cup', 
+                x: 980, y: 705, width: 55, height: 72,
+                message: "有人发现了真相并试图逃离"
+            }
+        ];
+        
+        anomalies.forEach(anomaly => {
+            const area = document.createElement('div');
+            area.className = 'anomaly-area';
+            area.id = `anomaly-${anomaly.id}`;
+            
+            // 应用缩放和偏移
+            const scaledX = anomaly.x * scale + offsetX;
+            const scaledY = anomaly.y * scale + offsetY;
+            const scaledWidth = anomaly.width * scale;
+            const scaledHeight = anomaly.height * scale;
+            
+            area.style.left = scaledX + 'px';
+            area.style.top = scaledY + 'px';
+            area.style.width = scaledWidth + 'px';
+            area.style.height = scaledHeight + 'px';
+            
+            console.log(`📍 异常区域 ${anomaly.id}: 原坐标(${anomaly.x},${anomaly.y}) -> 缩放后(${scaledX.toFixed(1)},${scaledY.toFixed(1)}) ${scaledWidth.toFixed(1)}x${scaledHeight.toFixed(1)}`);
+            
+            // 检查是否已经被发现
+            if (this.gameState.conferenceAnomaliesFound[anomaly.id]) {
+                area.classList.add('found');
+            }
+            
+            area.addEventListener('click', (e) => {
+                e.stopPropagation();
+                console.log(`🔍 点击异常区域: ${anomaly.id}`);
+                if (!this.gameState.conferenceAnomaliesFound[anomaly.id]) {
+                    this.findAnomaly(anomaly.id, anomaly.message);
+                }
+            });
+            
+            conferenceScreen.appendChild(area);
+        });
+        
+        console.log(`✅ 已创建 ${anomalies.length} 个异常检测区域`);
+    }
+    
+    clearAnomalyAreas() {
+        const conferenceScreen = document.getElementById('conference-screen');
+        conferenceScreen.querySelectorAll('.anomaly-area').forEach(area => area.remove());
+    }
+    
+    findAnomaly(anomalyId, message) {
+        // 标记为已发现
+        this.gameState.conferenceAnomaliesFound[anomalyId] = true;
+        
+        // 更新视觉效果
+        const area = document.getElementById(`anomaly-${anomalyId}`);
+        if (area) {
+            area.classList.add('found');
+        }
+        
+        // 显示消息
+        document.getElementById('conference-message').textContent = message;
+        
+        // 更新计数器
+        this.updateAnomalyCounter();
+        
+        // 播放音效
+        this.playAudio('click-audio');
+        
+        // 检查是否全部找到
+        setTimeout(() => {
+            this.checkAllAnomaliesFound();
+        }, 1000);
+    }
+    
+    updateAnomalyCounter() {
+        const foundCount = Object.values(this.gameState.conferenceAnomaliesFound).filter(found => found).length;
+        document.getElementById('anomaly-count').textContent = foundCount;
+    }
+    
+    checkAllAnomaliesFound() {
+        const allFound = Object.values(this.gameState.conferenceAnomaliesFound).every(found => found);
+        
+        if (allFound && !this.gameState.conferenceAllAnomaliesFound) {
+            this.gameState.conferenceAllAnomaliesFound = true;
+            
+            // 显示最终消息
+            const finalMessage = "这是S.L.的最后通信。我成功渗透了董事会会议系统。他们计划在明天重置所有测试对象的意识。27号，你是我们最后的希望。我在系统中植入了一个后门，出口代码是.....";
+            document.getElementById('conference-message').textContent = finalMessage;
+            
+            // 获得密码纸片3
+            setTimeout(() => {
+                this.collectItem('pwd3', '密码纸片3');
+                this.showDialog("你获得了密码纸片3！");
+            }, 2000);
+        }
+    }
 }
 
 // 初始化游戏
@@ -4290,6 +4530,7 @@ document.addEventListener('DOMContentLoaded', () => {
     window.playClaw = () => game.playClaw();
     window.discardToy = () => game.discardToy();
     window.verifyDoorAccess = () => game.verifyDoorAccess();
+    window.switchConferenceState = (state) => game.switchConferenceState(state);
     
     // 确保诊断运行
     setTimeout(() => {

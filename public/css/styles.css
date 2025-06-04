@@ -2131,12 +2131,137 @@ body {
 }
 
 @keyframes cellFall {
-    0% {
-        transform: translateY(-100px);
-        opacity: 0.5;
-    }
-    100% {
-        transform: translateY(0);
-        opacity: 1;
-    }
+    0% { transform: translateY(-100px); opacity: 0; }
+    100% { transform: translateY(0); opacity: 1; }
+}
+
+/* 会议室录像回放界面 */
+.modal-content.conference-replay {
+    width: 80%;
+    max-width: 1000px;
+    background: linear-gradient(135deg, #1a1a2e, #16213e);
+    border: 2px solid #9a7b4f;
+}
+
+.conference-header {
+    background: linear-gradient(135deg, #9a7b4f, #c9b037);
+    color: #1a1a2e;
+    padding: 15px 20px;
+    font-weight: bold;
+    font-size: 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.conference-content {
+    padding: 20px;
+}
+
+.conference-status {
+    background: rgba(201, 176, 55, 0.1);
+    border: 1px solid #c9b037;
+    padding: 10px;
+    margin-bottom: 15px;
+    border-radius: 5px;
+    text-align: center;
+    color: #c9b037;
+    font-weight: bold;
+}
+
+.conference-display {
+    border: 2px solid #9a7b4f;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.conference-screen {
+    width: 100%;
+    height: 400px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+    position: relative;
+    cursor: crosshair;
+}
+
+.anomaly-counter {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(220, 53, 69, 0.9);
+    color: white;
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-weight: bold;
+    font-size: 14px;
+    z-index: 100;
+}
+
+.conference-controls {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 15px;
+}
+
+.conference-btn {
+    background: linear-gradient(135deg, #6c757d, #495057);
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.conference-btn.active {
+    background: linear-gradient(135deg, #9a7b4f, #c9b037);
+    color: #1a1a2e;
+}
+
+.conference-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+.conference-message {
+    background: rgba(154, 123, 79, 0.1);
+    border: 1px solid #9a7b4f;
+    padding: 15px;
+    border-radius: 5px;
+    color: #e5d3b3;
+    line-height: 1.6;
+    min-height: 50px;
+}
+
+/* 异常区域高亮 */
+.anomaly-area {
+    position: absolute;
+    border: 3px solid transparent;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 50;
+}
+
+.anomaly-area:hover {
+    border-color: #dc3545;
+    background: rgba(220, 53, 69, 0.2);
+    box-shadow: 0 0 20px rgba(220, 53, 69, 0.6);
+}
+
+.anomaly-area.found {
+    border-color: #28a745;
+    background: rgba(40, 167, 69, 0.3);
+    animation: anomalyFound 0.5s ease;
+}
+
+@keyframes anomalyFound {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); box-shadow: 0 0 30px rgba(40, 167, 69, 0.8); }
+    100% { transform: scale(1); }
 } 

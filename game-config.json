@@ -21,6 +21,12 @@
             "name": "游戏室",
             "background": "./public/images/gamingroom.png",
             "music": "./public/audio/game.mp3"
+        },
+        "conference": {
+            "name": "会议室",
+            "background": "./public/images/conference.png",
+            "music": "./public/audio/background.mp3",
+            "initialDialog": "这里似乎有什么不对劲...试试查看会议录像"
         }
     },
     "items": {
@@ -111,7 +117,12 @@
         "usb_inserted": "U盘已插入电脑，垃圾箱中出现了新的文件。",
         "password_error": "密码错误！",
         "flowerpot_paper": "你在花盆的泥土中发现了一张皱巴巴的纸团。",
-        "clock_password": "你在时钟后面发现了一张密码纸片。"
+        "clock_password": "你在时钟后面发现了一张密码纸片。",
+        "conference_tv": "正在加载会议录像...检测到时间线异常",
+        "conference_clock_anomaly": "时间在量子系统中不是线性的，会议可能从未发生过",
+        "conference_whiteboard_anomaly": "会议的真正议题被暴露了",
+        "conference_cup_anomaly": "有人发现了真相并试图逃离",
+        "conference_all_found": "这是S.L.的最后通信。我成功渗透了董事会会议系统。他们计划在明天重置所有测试对象的意识。27号，你是我们最后的希望。我在系统中植入了一个后门，出口代码是....."
     },
     "passwords": {
         "computer": "1727",

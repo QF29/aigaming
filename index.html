@@ -41,6 +41,13 @@
                     </div>
                 </div>
 
+                <!-- 会议室场景 -->
+                <div id="conference-scene" class="scene">
+                    <div class="scene-background" style="background-image: url('./public/images/conference.png');">
+                        <!-- 可交互区域将通过JavaScript动态添加 -->
+                    </div>
+                </div>
+
                 <!-- 场景切换箭头 -->
                 <div class="scene-navigation">
                     <button id="prev-scene" class="scene-arrow left" style="display: none;">‹</button>
@@ -365,6 +372,32 @@
                     </div>
                     <button id="claw-play" onclick="playClaw()" disabled>开始抓取</button>
                     <button id="discard-toy" onclick="discardToy()" style="display: none;">丢弃</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 会议室录像回放界面 -->
+        <div id="conference-modal" class="modal">
+            <div class="modal-content conference-replay">
+                <div class="conference-header">
+                    <span>会议录像系统</span>
+                    <button class="close-btn" onclick="closeModal('conference-modal')">&times;</button>
+                </div>
+                <div class="conference-content">
+                    <div class="conference-status" id="conference-status">正在加载会议录像...检测到时间线异常</div>
+                    <div class="conference-display" id="conference-display">
+                        <div class="conference-screen" id="conference-screen" style="background-image: url('./public/images/conference.png');">
+                            <!-- 异常检测区域将动态添加 -->
+                            <div class="anomaly-counter" id="anomaly-counter" style="display: none;">
+                                异常发现：<span id="anomaly-count">0</span>/3
+                            </div>
+                        </div>
+                    </div>
+                    <div class="conference-controls">
+                        <button id="normal-state-btn" class="conference-btn active" onclick="switchConferenceState('normal')">显示正常状态</button>
+                        <button id="abnormal-state-btn" class="conference-btn" onclick="switchConferenceState('abnormal')">显示异常状态</button>
+                    </div>
+                    <div class="conference-message" id="conference-message"></div>
                 </div>
             </div>
         </div>
