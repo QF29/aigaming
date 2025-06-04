@@ -2253,7 +2253,8 @@ body {
     z-index: 50;
 }
 
-.anomaly-area:hover {
+/* 移除hover效果，改为点击后的clicked状态 */
+.anomaly-area.clicked {
     border-color: #dc3545;
     background: rgba(220, 53, 69, 0.2);
     box-shadow: 0 0 20px rgba(220, 53, 69, 0.6);

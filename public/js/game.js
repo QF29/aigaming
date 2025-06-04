@@ -959,8 +959,11 @@ Level <span style="color: #ff4444; font-weight: bold; background: rgba(255, 68, 
     }
     
     examineDoor() {
-        if (this.gameState.inventory.doorcard) {
+        if (this.selectedItem && this.selectedItem.id === 'doorcard') {
+            // 使用选中的门禁卡
             this.showDialog("刷卡成功！正在激活量子锁系统...");
+            this.selectedItem = null; // 刷卡后取消选中状态
+            this.updateInventory(); // 更新物品栏视觉效果
             setTimeout(() => {
                 this.showModal('door-access-modal');
             }, 1500);
@@ -2550,6 +2553,18 @@ S.L. (System Leak)
                     // 选中密码纸片
                     this.selectedItem = item;
                     this.showDialog(`已选择${item.name}，现在可以将其放入相框`);
+                }
+                this.updateInventory(); // 更新视觉效果
+            } else if (item.id === 'doorcard') {
+                // 门禁卡可以被选中/取消选中
+                if (this.selectedItem && this.selectedItem.id === 'doorcard') {
+                    // 如果已经选中门禁卡，则取消选中
+                    this.selectedItem = null;
+                    this.showDialog('已取消选择门禁卡');
+                } else {
+                    // 选中门禁卡
+                    this.selectedItem = item;
+                    this.showDialog('已选择门禁卡，现在可以对门使用');
                 }
                 this.updateInventory(); // 更新视觉效果
             } else if (item.id === 'paper') {
@@ -4485,8 +4500,15 @@ Dr. M.
             area.addEventListener('click', (e) => {
                 e.stopPropagation();
                 console.log(`🔍 点击异常区域: ${anomaly.id}`);
+                
+                // 添加clicked类来显示红框
+                area.classList.add('clicked');
+                
                 if (!this.gameState.conferenceAnomaliesFound[anomaly.id]) {
                     this.findAnomaly(anomaly.id, anomaly.message);
+                } else {
+                    // 即使已经发现，也显示消息
+                    document.getElementById('conference-message').textContent = anomaly.message;
                 }
             });
             
@@ -4508,7 +4530,8 @@ Dr. M.
         // 更新视觉效果
         const area = document.getElementById(`anomaly-${anomalyId}`);
         if (area) {
-            area.classList.add('found');
+            area.classList.remove('clicked'); // 移除红框
+            area.classList.add('found'); // 添加绿框
         }
         
         // 显示消息
