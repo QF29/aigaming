@@ -380,8 +380,9 @@ body {
     padding: 20px;
     max-width: 600px;
     color: #e5d3b3;
-    z-index: 1000;
+    z-index: 9999;
     display: none;
+    box-shadow: 0 0 30px rgba(154, 123, 79, 0.6);
 }
 
 .dialog-content p {
@@ -1078,6 +1079,271 @@ body {
 .access-subtitle {
     color: #9a7b4f;
     font-size: 14px;
+}
+
+/* 新的量子访问面板样式 */
+.quantum-access-panel {
+    background: linear-gradient(135deg, rgba(26, 26, 46, 0.9), rgba(10, 14, 23, 0.9));
+    border: 2px solid #9a7b4f;
+    border-radius: 15px;
+    padding: 25px;
+    margin: 20px 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.quantum-access-panel::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(201, 176, 55, 0.1), transparent 70%);
+    pointer-events: none;
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 25px;
+    position: relative;
+    z-index: 2;
+}
+
+.access-icon {
+    font-size: 28px;
+    animation: iconPulse 2s infinite;
+}
+
+@keyframes iconPulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+}
+
+.access-title {
+    color: #c9b037;
+    font-size: 18px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+/* 输入室样式 */
+.input-chamber {
+    position: relative;
+    margin: 30px 0;
+    z-index: 2;
+}
+
+.chamber-glow {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    right: -5px;
+    bottom: -5px;
+    background: linear-gradient(45deg, transparent, rgba(201, 176, 55, 0.3), transparent);
+    border-radius: 12px;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.input-chamber:hover .chamber-glow {
+    opacity: 1;
+}
+
+.quantum-input-field {
+    width: 100%;
+    padding: 18px 25px;
+    font-size: 18px;
+    background: rgba(0, 0, 0, 0.8);
+    border: 2px solid #9a7b4f;
+    border-radius: 10px;
+    color: #c9b037;
+    text-align: center;
+    font-family: 'Courier New', monospace;
+    letter-spacing: 3px;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 3;
+}
+
+.quantum-input-field:focus {
+    outline: none;
+    border-color: #c9b037;
+    background: rgba(0, 0, 0, 0.9);
+    box-shadow: 0 0 20px rgba(201, 176, 55, 0.4);
+    transform: translateY(-2px);
+}
+
+.quantum-input-field::placeholder {
+    color: rgba(154, 123, 79, 0.7);
+    letter-spacing: 1px;
+}
+
+.input-particles {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    overflow: hidden;
+    border-radius: 10px;
+}
+
+.scanning-line {
+    position: absolute;
+    top: 50%;
+    left: -100%;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, #c9b037, transparent);
+    animation: scanLine 3s infinite;
+    opacity: 0;
+}
+
+.quantum-input-field:focus + .input-particles .scanning-line {
+    opacity: 1;
+}
+
+@keyframes scanLine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* 验证区域样式 */
+.verification-zone {
+    margin: 30px 0;
+    text-align: center;
+    position: relative;
+    z-index: 2;
+}
+
+.quantum-verify-btn {
+    position: relative;
+    width: 100%;
+    padding: 0;
+    border: none;
+    background: none;
+    cursor: pointer;
+    overflow: hidden;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.quantum-verify-btn:hover {
+    transform: translateY(-3px);
+}
+
+.btn-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, #9a7b4f, #c9b037);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.quantum-verify-btn:hover .btn-background {
+    background: linear-gradient(135deg, #c9b037, #9a7b4f);
+    box-shadow: 0 8px 25px rgba(201, 176, 55, 0.5);
+}
+
+.btn-content {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding: 18px 25px;
+    color: #1a1a2e;
+    font-weight: bold;
+    font-size: 16px;
+    z-index: 2;
+}
+
+.verify-icon {
+    font-size: 20px;
+    animation: iconSpark 1.5s infinite;
+}
+
+@keyframes iconSpark {
+    0%, 100% { transform: scale(1) rotate(0deg); }
+    50% { transform: scale(1.2) rotate(180deg); }
+}
+
+.verify-text {
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.btn-energy-flow {
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.6s ease;
+}
+
+.quantum-verify-btn:hover .btn-energy-flow {
+    left: 100%;
+}
+
+/* 状态指示器样式 */
+.status-indicators {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 25px;
+    position: relative;
+    z-index: 2;
+}
+
+.indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #9a7b4f;
+}
+
+.indicator-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #28a745;
+    box-shadow: 0 0 8px #28a745;
+    animation: dotPulse 2s infinite;
+}
+
+@keyframes dotPulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* 量子错误显示样式 */
+.quantum-error {
+    background: linear-gradient(135deg, rgba(220, 53, 69, 0.1), rgba(139, 0, 0, 0.1));
+    border: 2px solid #dc3545;
+    border-radius: 10px;
+    padding: 15px;
+    color: #dc3545;
+    text-align: center;
+    font-weight: bold;
+    margin-top: 20px;
+    animation: errorGlow 1s ease-in-out;
+}
+
+@keyframes errorGlow {
+    0% { box-shadow: 0 0 0 rgba(220, 53, 69, 0); }
+    50% { box-shadow: 0 0 20px rgba(220, 53, 69, 0.5); }
+    100% { box-shadow: 0 0 0 rgba(220, 53, 69, 0); }
 }
 
 /* 图片查看器样式 */

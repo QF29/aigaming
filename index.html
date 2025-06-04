@@ -437,41 +437,49 @@
                     </div>
                     
                     <div class="password-section">
-                        <label class="password-label">
-                            <span class="label-text">最终访问密钥</span>
-                            <div class="input-container">
+                        <div class="quantum-access-panel">
+                            <div class="panel-header">
+                                <div class="access-icon">🔑</div>
+                                <span class="access-title">量子密钥验证</span>
+                            </div>
+                            
+                            <div class="input-chamber">
+                                <div class="chamber-glow"></div>
                                 <input type="text" 
                                        id="door-password-input" 
-                                       placeholder="输入密钥..."
+                                       placeholder="输入访问密钥..."
                                        maxlength="10"
-                                       class="quantum-password-input">
-                                <div class="input-glow"></div>
+                                       class="quantum-input-field">
+                                <div class="input-particles"></div>
+                                <div class="scanning-line"></div>
                             </div>
-                        </label>
+                            
+                            <div class="verification-zone">
+                                <button onclick="verifyDoorAccess()" class="quantum-verify-btn">
+                                    <div class="btn-background"></div>
+                                    <div class="btn-content">
+                                        <span class="verify-icon">⚡</span>
+                                        <span class="verify-text">启动验证协议</span>
+                                    </div>
+                                    <div class="btn-energy-flow"></div>
+                                </button>
+                            </div>
+                            
+                            <div class="status-indicators">
+                                <div class="indicator quantum-state">
+                                    <div class="indicator-dot"></div>
+                                    <span>量子通道稳定</span>
+                                </div>
+                                <div class="indicator encryption-state">
+                                    <div class="indicator-dot"></div>
+                                    <span>加密协议激活</span>
+                                </div>
+                            </div>
+                        </div>
                         
-                        <div class="error-display" id="door-access-error" style="display: none;"></div>
-                        
-                        <button onclick="verifyDoorAccess()" class="access-button">
-                            <span class="button-icon">🚀</span>
-                            <span class="button-text">验证访问权限</span>
-                            <div class="button-particles"></div>
-                        </button>
+                        <div class="error-display quantum-error" id="door-access-error" style="display: none;"></div>
                     </div>
                     
-                    <div class="security-info">
-                        <div class="info-item">
-                            <span class="info-icon">🛡️</span>
-                            <span>多重加密保护</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-icon">⚡</span>
-                            <span>量子纠缠验证</span>
-                        </div>
-                        <div class="info-item">
-                            <span class="info-icon">🔬</span>
-                            <span>神经网络分析</span>
-                        </div>
-                    </div>
                 </div>
                 
                 <div class="system-footer">

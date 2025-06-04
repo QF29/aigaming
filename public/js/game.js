@@ -321,10 +321,9 @@ class QuantumMatrixGame {
     startGame() {
         console.log('🎮 游戏开始');
         
-        if (this.gameState.isFirstTime) {
-            this.showDialog("你是林默，今天是你在量子矩阵科技的第一天。奇怪的是，办公室里一个人也没有。环境很不对劲，你必须找出离开的方法。");
-            this.gameState.isFirstTime = false;
-        }
+        this.showDialog("你是林默，今天是你在量子矩阵科技的第一天。奇怪的是，办公室里一个人也没有。环境很不对劲，你必须找出离开的方法。");
+        this.gameState.isFirstTime = false;
+        
         
         // 确保热区正确创建
         setTimeout(() => {
@@ -3544,9 +3543,9 @@ Dr. M.
     // 门禁密码验证
     verifyDoorAccess() {
         const input = document.getElementById('door-password-input');
-        const password = input.value.toLowerCase().trim();
+        const password = input.value.trim();
         
-        if (password === 'agora') {
+        if (password === '4399') {
             // 密码正确，触发游戏结束序列
             this.closeModal('door-access-modal');
             this.showGameEnding();
