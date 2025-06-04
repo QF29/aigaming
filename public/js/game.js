@@ -1903,45 +1903,13 @@ S.L. (System Leak)
                 // 开始动画，禁止其他操作
                 this.isAnimating = true;
                 
-                // 交换两个格子的颜色（带动画）
+                // 交换两个格子（swapCells会处理匹配验证和相关逻辑）
                 this.swapCells(this.selectedCell.row, this.selectedCell.col, row, col);
                 
-                // 等待交换动画完成后检查匹配
+                // 延迟重新启用操作
                 setTimeout(() => {
-                    const matches = this.findMatches();
-                    if (matches.length > 0) {
-                        // 有匹配，移除匹配的格子并获得分数（只有玩家操作才计分）
-                        this.removeMatches(matches, true); // true表示计分
-                        this.gameScore += 1; // 每完成一次三消获得1分
-                        this.updateGameScore();
-                        
-                        // 检查是否获胜
-                        if (this.gameScore >= 10) { // 降低获胜分数到10分
-                            this.gameState.gameWon = true;
-                            this.collectItem('coin', '游戏币');
-                            this.showDialog('🎉 恭喜！你赢得了三消游戏并获得了游戏币！');
-                            // 停止自动检查
-                            if (this.autoCheckInterval) {
-                                clearInterval(this.autoCheckInterval);
-                            }
-                            setTimeout(() => this.closeModal('match3-modal'), 3000);
-                        }
-                        
-                        // 等待消除动画完成，然后让自动检查接管
-                        setTimeout(() => {
-                            this.isAnimating = false;
-                            // 自动检查会在定时器中处理后续的连锁消除
-                        }, 1200);
-                    } else {
-                        // 没有匹配，交换回来
-                        setTimeout(() => {
-                            this.swapCells(this.selectedCell.row, this.selectedCell.col, row, col);
-                            setTimeout(() => {
-                                this.isAnimating = false;
-                            }, 600);
-                        }, 100);
-                    }
-                }, 600);
+                    this.isAnimating = false;
+                }, 1000);
             } else {
                 // 不相邻，选择新的格子
                 this.selectedCell.element.classList.remove('selected');
@@ -1960,26 +1928,75 @@ S.L. (System Leak)
         cell1.classList.add('swapping');
         cell2.classList.add('swapping');
         
+        // 保存交换前的状态
+        const originalValue1 = this.gameBoard[row1][col1];
+        const originalValue2 = this.gameBoard[row2][col2];
+        
         // 交换数据
         const temp = this.gameBoard[row1][col1];
         this.gameBoard[row1][col1] = this.gameBoard[row2][col2];
         this.gameBoard[row2][col2] = temp;
         
-        // 延迟更新显示，让动画先播放
+        // 延迟检查匹配和更新显示
         setTimeout(() => {
-            this.updateBoardDisplay();
+            // 检查交换后是否有匹配
+            const matches = this.findMatches();
             
-            // 移除动画类
-            setTimeout(() => {
-                cell1.classList.remove('swapping');
-                cell2.classList.remove('swapping');
+            if (matches.length > 0) {
+                // 有匹配，正常处理
+                this.updateBoardDisplay();
                 
-                // 清除选择状态
-                if (this.selectedCell && this.selectedCell.element) {
-                    this.selectedCell.element.classList.remove('selected');
-                    this.selectedCell = null;
-                }
-            }, 100);
+                // 移除动画类
+                setTimeout(() => {
+                    cell1.classList.remove('swapping');
+                    cell2.classList.remove('swapping');
+                    
+                    // 清除选择状态
+                    if (this.selectedCell && this.selectedCell.element) {
+                        this.selectedCell.element.classList.remove('selected');
+                        this.selectedCell = null;
+                    }
+                    
+                    // 处理匹配
+                    this.gameScore++;
+                    this.updateGameScore();
+                    this.removeMatches(matches, true);
+                    
+                    // 检查是否获胜
+                    if (this.gameScore >= 10) {
+                        this.gameState.gameWon = true;
+                        this.collectItem('coin', '游戏币');
+                        this.showDialog('🎉 恭喜！你赢得了三消游戏并获得了游戏币！');
+                        // 停止自动检查
+                        if (this.autoCheckInterval) {
+                            clearInterval(this.autoCheckInterval);
+                        }
+                        setTimeout(() => this.closeModal('match3-modal'), 3000);
+                    }
+                }, 100);
+            } else {
+                // 没有匹配，还原交换
+                console.log('🔄 交换无效，还原为原始位置');
+                
+                // 还原数据
+                this.gameBoard[row1][col1] = originalValue1;
+                this.gameBoard[row2][col2] = originalValue2;
+                
+                // 更新显示为还原后的状态
+                this.updateBoardDisplay();
+                
+                // 移除动画类并清除选择
+                setTimeout(() => {
+                    cell1.classList.remove('swapping');
+                    cell2.classList.remove('swapping');
+                    
+                    // 清除选择状态
+                    if (this.selectedCell && this.selectedCell.element) {
+                        this.selectedCell.element.classList.remove('selected');
+                        this.selectedCell = null;
+                    }
+                }, 100);
+            }
         }, 300);
     }
     
