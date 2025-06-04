@@ -3558,40 +3558,76 @@ Dr. M.
     
     // 游戏结束序列
     showGameEnding() {
-        this.showDialog("系统访问成功！量子锁正在解除...");
-        setTimeout(() => {
-            this.showDialog("🎉 恭喜！你成功破解了量子矩阵的密码，即将逃离这个虚拟世界！");
-            setTimeout(() => {
-                // 显示胜利界面
-                this.showVictoryScreen();
-            }, 3000);
-        }, 2000);
+        // 直接切换到大厅场景
+        this.switchToHallScene();
     }
     
-    // 显示胜利界面
-    showVictoryScreen() {
-        // 创建胜利界面
-        const victoryScreen = document.createElement('div');
-        victoryScreen.id = 'victory-screen';
-        victoryScreen.className = 'victory-screen';
-        victoryScreen.innerHTML = `
-            <div class="victory-content">
-                <div class="victory-image" style="background-image: url('./public/images/begin.png');"></div>
-                <div class="victory-text">
-                    <h1>游戏完成！</h1>
-                    <p>你成功逃离了量子矩阵</p>
-                    <p>但这只是开始...真正的现实在等待着你</p>
-                    <button onclick="location.reload()" class="restart-btn">重新开始</button>
+    // 切换到大厅场景
+    switchToHallScene() {
+        // 关闭门禁面板
+        this.closeModal('door-access-modal');
+        if (document.getElementById('door-security-panel')) {
+            document.getElementById('door-security-panel').style.display = 'none';
+        }
+        
+        // 创建大厅场景
+        const sceneContainer = document.querySelector('.scene-container');
+        
+        // 隐藏当前场景
+        const currentScene = document.querySelector('.scene.active');
+        if (currentScene) {
+            currentScene.classList.remove('active');
+        }
+        
+        // 创建大厅场景
+        const hallScene = document.createElement('div');
+        hallScene.className = 'scene active';
+        hallScene.id = 'hall-scene';
+        hallScene.innerHTML = `
+            <div class="scene-background" style="background-image: url('./public/images/begin.png'); background-size: cover; background-position: center;">
+                <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+                           background: rgba(0, 0, 0, 0.8); color: #c9b037; padding: 30px; 
+                           border-radius: 15px; border: 2px solid #9a7b4f; text-align: center; 
+                           max-width: 600px; font-family: 'Courier New', monospace;">
+                    <h2 style="color: #c9b037; margin-bottom: 20px; font-size: 24px;">量子矩阵科技 - 主大厅</h2>
+                    <p style="margin-bottom: 15px; line-height: 1.6;">门禁系统已解除，欢迎进入量子矩阵科技大厅。</p>
+                    <p style="margin-bottom: 15px; line-height: 1.6;">这里是公司的核心区域，通往各个重要部门的枢纽。</p>
+                    <p style="margin-bottom: 15px; line-height: 1.6;">但是...周围依然空无一人，这种诡异的寂静让人不安。</p>
+                    <p style="margin-bottom: 20px; line-height: 1.6; color: #ff6b6b; font-weight: bold;">
+                        系统检测到异常量子波动，现实稳定性下降至73%...
+                    </p>
+                    <p style="color: #9a7b4f; font-style: italic;">你必须继续寻找真相，这或许只是逃离虚拟牢笼的第一步。</p>
                 </div>
             </div>
         `;
         
-        document.body.appendChild(victoryScreen);
+        sceneContainer.appendChild(hallScene);
         
-        // 显示胜利界面
+        // 更新游戏状态
+        this.currentScene = 'hall';
+        
+        // 播放背景音乐
+        this.playBackgroundMusic();
+        
+        // 3秒后隐藏提示信息
         setTimeout(() => {
-            victoryScreen.style.display = 'flex';
-        }, 100);
+            const infoPanel = hallScene.querySelector('div[style*="position: absolute"]');
+            if (infoPanel) {
+                infoPanel.style.opacity = '0';
+                infoPanel.style.transition = 'opacity 1s ease';
+                setTimeout(() => {
+                    if (infoPanel.parentNode) {
+                        infoPanel.parentNode.removeChild(infoPanel);
+                    }
+                }, 1000);
+            }
+        }, 5000);
+    }
+    
+    // 显示胜利界面 (保留原函数但不再使用)
+    showVictoryScreen() {
+        // 这个函数现在被switchToHallScene()替代
+        console.log('Victory screen bypassed, switched to hall scene instead.');
     }
     
     // 24英寸屏幕调试工具

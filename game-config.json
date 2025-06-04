@@ -11,6 +11,12 @@
             "music": "./public/audio/background.mp3",
             "initialDialog": "你是林默，今天是你在量子矩阵科技的第一天。奇怪的是，办公室里一个人也没有。环境很不对劲，你必须找出离开的方法。"
         },
+        "hall": {
+            "name": "大厅",
+            "background": "./public/images/begin.png",
+            "music": "./public/audio/background.mp3",
+            "initialDialog": "门禁系统已解除，你进入了量子矩阵科技的主大厅。这里空旷而寂静，异常的量子波动让现实变得不稳定..."
+        },
         "breakroom": {
             "name": "茶水间",
             "background": "./public/images/breakroom.png",

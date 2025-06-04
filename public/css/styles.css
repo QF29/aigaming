@@ -162,11 +162,11 @@ body {
     transform-origin: center;
 }
 
-.interactive-area:hover {
+/* .interactive-area:hover {
     border-color: rgba(154, 123, 79, 0.8);
     box-shadow: 0 0 20px rgba(154, 123, 79, 0.5);
     background: rgba(154, 123, 79, 0.15);
-}
+} */
 
 /* 调试模式 */
 .debug-mode .interactive-area {
