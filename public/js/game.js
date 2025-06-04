@@ -1983,7 +1983,7 @@ S.L. (System Leak)
         }, 300);
     }
     
-    updateBoardDisplay(withFallAnimation = false, columnsToUpdate = null) {
+    updateBoardDisplay(withFallAnimation = false, columnsToUpdate = null, animationRanges = null) {
         const colors = ['🔴', '🟡', '🔵', '🟢', '🟣'];
         const cells = document.querySelectorAll('.game-cell');
         
@@ -1998,12 +1998,15 @@ S.L. (System Leak)
             
             cell.textContent = colors[this.gameBoard[row][col]];
             
-            // 如果需要下落动画，为新生成的格子添加动画
-            if (withFallAnimation && columnsToUpdate && columnsToUpdate.has(col) && row <= 2) {
-                cell.classList.add('falling');
-                setTimeout(() => {
-                    cell.classList.remove('falling');
-                }, 500);
+            // 如果需要下落动画，为指定范围内的方块添加动画
+            if (withFallAnimation && animationRanges && animationRanges.has(col)) {
+                const maxRow = animationRanges.get(col);
+                if (row <= maxRow) {
+                    cell.classList.add('falling');
+                    setTimeout(() => {
+                        cell.classList.remove('falling');
+                    }, 500);
+                }
             }
         });
     }
@@ -2075,11 +2078,18 @@ S.L. (System Leak)
         
         // 等待动画完成后处理数据
         setTimeout(() => {
-            // 标记要移除的格子并收集受影响的列
+            // 标记要移除的格子并收集受影响的列和最低消除行
             const affectedColumns = new Set();
+            const columnBottomRemoveRow = new Map(); // 记录每列最低的消除行
+            
             matches.forEach(match => {
                 this.gameBoard[match.row][match.col] = -1; // 标记为空
                 affectedColumns.add(match.col);
+                
+                // 记录每列最低的消除行（行数越大越靠下）
+                if (!columnBottomRemoveRow.has(match.col) || match.row > columnBottomRemoveRow.get(match.col)) {
+                    columnBottomRemoveRow.set(match.col, match.row);
+                }
             });
             
             // 只处理受影响的列
@@ -2101,8 +2111,8 @@ S.L. (System Leak)
                 }
             }
             
-            // 只更新受影响的列并添加下落动画
-            this.updateBoardDisplay(true, affectedColumns);
+            // 只更新受影响的列，动画范围从顶部到最低消除行
+            this.updateBoardDisplay(true, affectedColumns, columnBottomRemoveRow);
             
             // 移除匹配动画类
             matches.forEach(match => {
@@ -2129,15 +2139,15 @@ S.L. (System Leak)
         const discardButton = document.getElementById('discard-toy');
         
         // 验证所有必需的元素是否存在
-        if (!playButton || !status) {
-            console.error('❌ 抓娃娃机UI元素缺失:', {
-                playButton: !!playButton,
-                status: !!status,
-                result: !!result,
-                discardButton: !!discardButton
-            });
-            return;
-        }
+        // if (!playButton || !status) {
+        //     console.error('❌ 抓娃娃机UI元素缺失:', {
+        //         playButton: !!playButton,
+        //         status: !!status,
+        //         result: !!result,
+        //         discardButton: !!discardButton
+        //     });
+        //     return;
+        // }
         
         // 强制设置按钮样式确保可见性
         playButton.style.cssText = `
@@ -2242,14 +2252,19 @@ S.L. (System Leak)
                 `;
             }
             
-            if (discardButton) {
-                discardButton.style.display = 'block';
-            }
+            // if (discardButton) {
+            //     discardButton.style.display = 'block';
+            // }
+            // discardButton.textContent = '丢弃玩偶';
+            playButton.textContent= '丢弃玩偶';
             
             if (status) {
                 status.textContent = '获得了一个玩偶！';
                 status.style.color = '#4CAF50';
             }
+            
+            // 显示对话框提示这个娃娃不对
+            this.showDialog('这个娃娃不对，重新抓取吧！');
             
             console.log(`✅ 第${this.clawMachineUsed}次抓取: 获得玩偶`);
             
@@ -3561,7 +3576,7 @@ Dr. M.
         const input = document.getElementById('door-password-input');
         const password = input.value.trim();
         
-        if (password === '4399') {
+        if (password === 'aroga') {
             // 密码正确，触发游戏结束序列
             this.closeModal('door-access-modal');
             this.showGameEnding();
