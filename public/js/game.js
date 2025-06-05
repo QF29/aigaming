@@ -40,7 +40,7 @@ class QuantumMatrixGame {
         this.offsetY = 0;
         this.selectedDesktopIcon = null;
         
-        this.scenes = ['office-scene', 'breakroom-scene', 'gamingroom-scene', 'conference-scene'];
+        this.scenes = ['office-scene', 'breakroom-scene', 'gamingroom-scene', 'library-scene','conference-scene'];
         this.currentSceneIndex = 0;
         
         this.gameState.currentPassword = '';
@@ -588,6 +588,9 @@ class QuantumMatrixGame {
             case 'conference-scene':
                 this.createConferenceInteractives(sceneBackground);
                 break;
+            case 'library-scene':
+                this.createLibraryInteractives(sceneBackground);
+                break;
         }
     }
     
@@ -612,10 +615,12 @@ class QuantumMatrixGame {
             { name: 'door', x: 1287, y: 135.625, width: 255, height: 540, action: () => this.examineDoor() },
             { name: 'flowerpot', x: 1096, y: 631.625, width: 96, height: 106, action: () => this.examineFlowerpot() },
             { name: 'clock', x: 932, y: 144.625, width: 152, height: 153, action: () => this.examineClock() },
+            { name: 'book', x: 1043, y: 363.625, width: 199, height: 226, action: () => this.examineBook() },
             { name: 'computer', x: 632, y: 389.625, width: 190, height: 120, action: () => this.openComputer() },
             { name: 'drawer1', x: 412, y: 680.625, width: 164, height: 69, action: () => this.openDrawer(1) },
             { name: 'drawer2', x: 852, y: 674.625, width: 140, height: 71, action: () => this.openDrawer(2) },
             { name: 'drawer3', x: 412, y: 754.625, width: 164, height: 72, action: () => this.openDrawer(3) }
+
         ];
         
         console.log(`📐 使用基准坐标集 (容器: ${containerWidth.toFixed(0)}x${containerHeight.toFixed(0)}) - 基于1676x944基准`);
@@ -627,6 +632,142 @@ class QuantumMatrixGame {
         }));
         
         this.createAreasFromConfig(container, scaledAreas);
+    }
+    // 在 createInteractiveAreas() 的 switch 里添加
+
+
+// 新增方法
+    createLibraryInteractives(container) {
+        // 1. 清理旧元素
+        container.querySelectorAll('.library-hotspot, .library-symbol, .library-uv-light').forEach(el => el.remove());
+        // 热区百分比坐标
+        const bookHotspots = [
+            {x: 0.145, y: 0.1, w: 0.075, h: 0.2},
+            {x: 0.212, y: 0.05,   w: 0.075, h: 0.2},
+            {x: 0.312, y: 0.1, w: 0.075, h: 0.2},
+            {x: 0.412, y: 0.1, w: 0.075, h: 0.2},
+            {x: 0.512, y: 0.1, w: 0.075, h: 0.2},
+            {x: 0.14, y: 0.3, w: 0.075, h: 0.2},
+            {x: 0.25, y: 0.3, w: 0.075, h: 0.2},
+            {x: 0.412, y: 0.3, w: 0.075, h: 0.2},
+            {x: 0.48, y: 0.3, w: 0.075, h: 0.2},
+            {x: 0.112, y: 0.6, w: 0.075, h: 0.2},
+            {x: 0.212, y: 0.6, w: 0.075, h: 0.2},
+            {x: 0.312, y: 0.6, w: 0.075, h: 0.2},
+            {x: 0.412, y: 0.6, w: 0.075, h: 0.2},
+            {x: 0.512, y: 0.5, w: 0.075, h: 0.2}
+        ];
+        const symbols = ['△','↓','←','←','←',  // 0-4
+                        '↑','→','↓','↑','→',  // 5-9
+                        '↑','↑','↻','。','↑']; // 10-14
+        const correctBookIndex = 0;
+        const width = container.offsetWidth;
+        const height = container.offsetHeight;
+        // 物品栏插槽
+        const slots = document.querySelectorAll('#inventory .inventory-slot');
+        const uvLightSlot = slots[0];
+        const cardSlot = slots[1];
+        // 状态
+        if (!this.libraryState) {
+            this.libraryState = { hasUVLight: false, isUsingUVLight: false, hasFoundCard: false };
+        }
+        const state = this.libraryState;
+        // 2. 生成手电筒按钮
+        let uvLight = container.querySelector('.library-uv-light');
+        if (!uvLight) {
+            uvLight = document.createElement('div');
+            uvLight.className = 'library-uv-light';
+            uvLight.style.position = 'absolute';
+            uvLight.style.bottom = '29%';
+            uvLight.style.left = '75%';
+            uvLight.style.transform = 'translateX(-50%)';
+            uvLight.style.width = '80px';
+            uvLight.style.height = '80px';
+            uvLight.style.background = "url('./public/images/shou.png') no-repeat center center";
+            uvLight.style.backgroundSize = 'contain';
+            uvLight.style.backgroundColor = 'transparent';
+            uvLight.style.cursor = 'pointer';
+            uvLight.style.zIndex = '100';
+            container.appendChild(uvLight);
+        }
+        uvLight.onclick = () => {
+            if (!state.hasUVLight) {
+                state.hasUVLight = true;
+                uvLight.style.display = 'none';
+                if (uvLightSlot) {
+                    uvLightSlot.style.backgroundImage = "url('./public/images/shou.png')";
+                    uvLightSlot.style.backgroundSize = 'contain';
+                    uvLightSlot.style.backgroundRepeat = 'no-repeat';
+                }
+                this.showDialog('获得了紫外线手电筒');
+            }
+        };
+        // 3. 物品栏手电筒点击
+        if (uvLightSlot) {
+            uvLightSlot.onclick = () => {
+                if (state.hasUVLight) {
+                    state.isUsingUVLight = !state.isUsingUVLight;
+                    uvLightSlot.style.border = state.isUsingUVLight ? '2px solid #8a2be2' : '';
+                    uvLightSlot.style.boxShadow = state.isUsingUVLight ? '0 0 15px #8a2be2' : 'none';
+                    this.showDialog(state.isUsingUVLight ? '正在使用紫外线手电筒' : '停止使用紫外线手电筒');
+                }
+            };
+        }
+        // 4. 生成热区和符号
+        const symbolElements = [];
+        bookHotspots.forEach((pos, idx) => {
+            // 热区
+            const btn = document.createElement('button');
+            btn.className = 'library-hotspot';
+            btn.style.position = 'absolute';
+            btn.style.left = (pos.x * width) + 'px';
+            btn.style.top = (pos.y * height) + 'px';
+            btn.style.width = (pos.w * width) + 'px';
+            btn.style.height = (pos.h * height) + 'px';
+            btn.style.background = 'rgba(0,0,0,0)';
+            btn.style.border = 'none';
+            btn.style.zIndex = '10';
+            btn.setAttribute('data-symbol', symbols[idx]);
+            btn.setAttribute('data-idx', idx);
+            btn.onclick = () => {
+                if (state.isUsingUVLight && !state.hasFoundCard) {
+                    symbolElements[idx].style.display = 'flex';
+                    if (idx === correctBookIndex) {
+                        state.hasFoundCard = true;
+                        if (cardSlot) {
+                            cardSlot.classList.add('inventory-item');
+                            cardSlot.style.backgroundImage = "url('./public/images/pwd3.png')";
+                            cardSlot.style.backgroundSize = 'contain';
+                            cardSlot.style.backgroundRepeat = 'no-repeat';
+                            cardSlot.style.boxShadow = '0 0 15px #8a2be2';
+                        }
+                        this.showDialog('书本中发现了一张密码纸片。');
+                    } else {
+                        this.showDialog('这里似乎没有什么特别的发现……');
+                    }
+                }
+            };
+            container.appendChild(btn);
+            // 符号
+            const symbol = document.createElement('span');
+            symbol.className = 'library-symbol';
+            symbol.textContent = symbols[idx];
+            symbol.style.position = 'absolute';
+            symbol.style.left = (pos.x * width) + 'px';
+            symbol.style.top = (pos.y * height) + 'px';
+            symbol.style.width = (pos.w * width) + 'px';
+            symbol.style.height = (pos.h * height) + 'px';
+            symbol.style.display = 'none';
+            symbol.style.alignItems = 'center';
+            symbol.style.justifyContent = 'center';
+            symbol.style.color = '#fff';
+            symbol.style.fontSize = Math.max(24, Math.floor(pos.w * width * 0.7)) + 'px';
+            symbol.style.textShadow = '0 0 15px #8a2be2, 0 0 25px #8a2be2';
+            symbol.style.zIndex = '20';
+            symbol.style.pointerEvents = 'none';
+            container.appendChild(symbol);
+            symbolElements[idx] = symbol;
+        });
     }
     
     createBreakroomInteractives(container) {
@@ -986,6 +1127,14 @@ Level <span style="color: #ff4444; font-weight: bold; background: rgba(255, 68, 
             this.showDialog("你在时钟后面发现了一张密码纸片。");
         } else {
             this.showDialog("一个普通的时钟。");
+        }
+    }
+    examineBook() {
+        if (!this.gameState.inventory.pwd2) {
+            this.collectItem('pwd3', '密码纸片3');
+            this.showDialog("你在书架上发现一张密码纸片。");
+        } else {
+            this.showDialog("这是一本普通的书。");
         }
     }
     

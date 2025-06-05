@@ -4,155 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>锈湖风格图书角场景</title>
+    <link rel="stylesheet" href="./public/css/styles.css">
     <style>
-        /* 基础样式 */
-        body {
-            margin: 0;
-            padding: 0;
-            background: #000;
-            font-family: Arial, sans-serif;
-            width: 100%;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .scene-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            background: #000;
-        }
-
-        #library-scene {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 800px;
-            height: 600px;
-            background: url('../public/images/book.png') no-repeat center center;
-            background-size: contain;
-            border: 2px solid #333;
-            overflow: hidden;
-        }
-
-        /* 物品栏样式 */
-        #inventory {
-            position: absolute;
-            top: 50%;
-            right: 30px;
-            transform: translateY(-50%);
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            padding: 10px 6px;
-            background: rgba(0, 0, 0, 0.7);
-            border-radius: 10px;
-            z-index: 1000;
-            width: 70px;
-            box-sizing: border-box;
-            align-items: center;
-        }
-
-        .inventory-slot {
-            width: 54px;
-            height: 54px;
-            border: 2px solid #666;
-            border-radius: 5px;
-            background: rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        /* 紫外线手电筒样式 */
-        #uv-light {
-            position: absolute;
-            bottom: 200px;
-            left: 75%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 80px;
-            background: url('../public/images/shou.png') no-repeat center center;
-            background-size: contain;
-            cursor: pointer;
-            z-index: 100;
-        }
-
-        /* 热区按钮样式 */
+        /* 只保留热区和符号的特殊样式 */
         .book-hotspot {
             position: absolute;
-            width: 60px;
-            height: 90px;
             background: rgba(0,0,0,0);
             border: none;
             cursor: pointer;
             z-index: 10;
             padding: 0;
         }
-
-        /* 符号显示样式 */
         .symbol {
             position: absolute;
-            width: 60px;
-            height: 90px;
-            left: 0;
-            top: 0;
             display: flex;
             align-items: center;
             justify-content: center;
             color: #fff;
-            font-size: 32px;
+            font-size: 2vw;
             text-shadow: 0 0 15px #8a2be2, 0 0 25px #8a2be2;
             z-index: 20;
             pointer-events: none;
             display: none;
         }
-
         .symbol.active {
             display: flex;
             animation: symbol-pop 0.3s;
         }
-
         @keyframes symbol-pop {
             0% { transform: scale(0.5); opacity: 0; }
             100% { transform: scale(1); opacity: 1; }
         }
-
-        /* 对话框样式 */
-        #dialog-box {
-            position: fixed;
-            bottom: 120px;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 15px 30px;
-            background: rgba(0, 0, 0, 0.9);
-            color: #fff;
-            border-radius: 10px;
-            display: none;
-            max-width: 80%;
-            text-align: center;
-            font-size: 18px;
-            border: 1px solid #8a2be2;
-            box-shadow: 0 0 20px rgba(138, 43, 226, 0.3);
-            z-index: 1000;
-        }
-
-        /* 提示样式 */
-        #game-tips {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            border-radius: 8px;
-            font-size: 16px;
-            border: 1px solid #666;
-            z-index: 1000;
-        }
-
         #symbol-hint {
             position: absolute;
             top: 10px;
@@ -167,16 +49,72 @@
             border: 1px solid #8a2be2;
             box-shadow: 0 0 10px #8a2be2;
         }
+        #library-scene-bg {
+            position: relative;
+            width: 100%;
+            height: 0;
+            padding-bottom: 56.25%; /* 16:9 */
+            background-image: url('../public/images/book.png');
+            background-size: contain;
+            background-repeat: no-repeat;
+            background-position: center;
+            cursor: pointer;
+            image-rendering: pixelated;
+            image-rendering: crisp-edges;
+        }
+        #uv-light {
+            position: absolute;
+            bottom: 29%;
+            left: 75%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 80px;
+            background: url('../public/images/shou.png') no-repeat center center;
+            background-size: contain;
+            background-color: transparent;
+            cursor: pointer;
+            z-index: 100;
+        }
+        /* 场景切换按钮样式 */
+        #scene-transition {
+            position: absolute;
+            left: 50%;
+            bottom: 10px;
+            transform: translateX(-50%);
+            z-index: 1200;
+            display: flex;
+            gap: 20px;
+        }
+        #scene-transition button {
+            background: #222;
+            color: #e5d3b3;
+            border: 2px solid #9a7b4f;
+            border-radius: 6px;
+            padding: 8px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background 0.2s, color 0.2s;
+        }
+        #scene-transition button:hover {
+            background: #9a7b4f;
+            color: #222;
+        }
     </style>
 </head>
 <body>
     <div class="scene-container">
-        <div id="library-scene">
-            <div id="symbol-hint">符号指引：每本书的符号会指向另一方向，推理终点才能找到卡片。</div>
-            <!-- 热区和符号将由JS动态生成 -->
-            <div id="uv-light"></div>
-            <div id="dialog-box"></div>
-            <div id="game-tips">提示：点击紫外线手电筒收集并使用它</div>
+        <div id="library-scene-container" style="flex:1; position:relative;">
+            <div id="library-scene-bg">
+                <!-- <div id="symbol-hint">符号指引：每本书的符号会指向另一方向，推理终点才能找到卡片。</div> -->
+                <!-- 热区和符号将由JS动态生成 -->
+                <div id="uv-light"></div>
+                <div id="dialog-box"></div>
+                <div id="game-tips">提示：点击紫外线手电筒收集并使用它</div>
+                <div id="scene-transition">
+                    <button id="go-to-meeting">前往会议室</button>
+                    <button id="go-to-library" style="display:none;">返回图书角</button>
+                </div>
+            </div>
         </div>
         <div id="inventory">
             <div class="inventory-slot" id="uv-light-slot"></div>
@@ -184,49 +122,54 @@
             <div class="inventory-slot" id="help-slot"></div>
         </div>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // 书本热区坐标（相对于#library-scene，单位px）
+            // 书本热区坐标（百分比，基于背景图宽高）
+            // x, y, w, h 都是0~1之间的比例
             const bookHotspots = [
-                {left: 100,  top: 120}, {left: 170, top: 90}, {left: 250, top: 120}, {left: 330, top: 120}, {left: 410, top: 120},
-                {left: 170, top: 230}, {left: 250, top: 230}, {left: 330, top: 230}, {left: 410, top: 230},
-                {left: 90,  top: 340}, {left: 170, top: 340}, {left: 250, top: 340}, {left: 330, top: 340}, {left: 410, top: 340}
+                {x: 0.125, y: 0.1, w: 0.075, h: 0.2},
+                {x: 0.212, y: 0.05,   w: 0.075, h: 0.2},
+                {x: 0.312, y: 0.1, w: 0.075, h: 0.2},
+                {x: 0.412, y: 0.1, w: 0.075, h: 0.2},
+                {x: 0.512, y: 0.1, w: 0.075, h: 0.2},
+                {x: 0.14, y: 0.3, w: 0.075, h: 0.2},
+                {x: 0.25, y: 0.3, w: 0.075, h: 0.2},
+                {x: 0.412, y: 0.3, w: 0.075, h: 0.2},
+                {x: 0.48, y: 0.3, w: 0.075, h: 0.2},
+                {x: 0.112, y: 0.6, w: 0.075, h: 0.2},
+                {x: 0.212, y: 0.6, w: 0.075, h: 0.2},
+                {x: 0.312, y: 0.6, w: 0.075, h: 0.2},
+                {x: 0.412, y: 0.6, w: 0.075, h: 0.2},
+                {x: 0.512, y: 0.5, w: 0.075, h: 0.2}
             ];
-            // 固定符号分布，形成链式指引，终点为12号书
-            // 0→1→6→7→12（终点），其他为迷惑
+            // 固定符号分布，终点为0号书
             const symbols = ['△','↓','←','←','←',  // 0-4
                             '↑','→','↓','↑','→',  // 5-9
                             '↑','↑','↻','。','↑']; // 10-14
-            // 0号书→1号书，1号书↓6号书，6号书→7号书，7号书↓12号书，12号书↻（终点）
             const correctBookIndex = 0;
-            const scene = document.getElementById('library-scene');
+            const scene = document.getElementById('library-scene-bg');
             const symbolElements = [];
-            bookHotspots.forEach((pos, idx) => {
-                // 热区按钮
-                const btn = document.createElement('button');
-                btn.className = 'book-hotspot';
-                btn.style.left = pos.left + 'px';
-                btn.style.top = pos.top + 'px';
-                btn.setAttribute('data-symbol', symbols[idx]);
-                btn.setAttribute('data-idx', idx);
-                scene.appendChild(btn);
-                // 符号元素
-                const symbol = document.createElement('span');
-                symbol.className = 'symbol';
-                symbol.textContent = symbols[idx];
-                symbol.style.left = pos.left + 'px';
-                symbol.style.top = pos.top + 'px';
-                scene.appendChild(symbol);
-                symbolElements[idx] = symbol;
-            });
+            let hotspotElements = [];
             let hasUVLight = false;
             let isUsingUVLight = false;
             let hasFoundCard = false;
-            // 紫外线手电筒交互
             const uvLight = document.getElementById('uv-light');
             const uvLightSlot = document.getElementById('uv-light-slot');
             const dialogBox = document.getElementById('dialog-box');
+            // 事件委托绑定热区点击
+            scene.addEventListener('click', function(e) {
+                const btn = e.target.closest('.book-hotspot');
+                if (!btn) return;
+                const idx = parseInt(btn.getAttribute('data-idx'));
+                if (isUsingUVLight && !hasFoundCard) {
+                    symbolElements[idx].classList.add('active');
+                    if (idx === correctBookIndex) {
+                        examineBook();
+                    } else {
+                        showDialog('这里似乎没有什么特别的发现……');
+                    }
+                }
+            });
             uvLight.addEventListener('click', function() {
                 if (!hasUVLight) {
                     hasUVLight = true;
@@ -240,30 +183,20 @@
             uvLightSlot.addEventListener('click', function() {
                 if (hasUVLight) {
                     isUsingUVLight = !isUsingUVLight;
-                    uvLightSlot.style.border = isUsingUVLight ? '2px solid #8a2be2' : '2px solid #666';
+                    uvLightSlot.style.border = isUsingUVLight ? '2px solid #8a2be2' : '';
                     uvLightSlot.style.boxShadow = isUsingUVLight ? '0 0 15px #8a2be2' : 'none';
                     showDialog(isUsingUVLight ? '正在使用紫外线手电筒' : '停止使用紫外线手电筒');
                 }
             });
-            // 热区点击交互
-            scene.querySelectorAll('.book-hotspot').forEach((btn, idx) => {
-                btn.addEventListener('click', function() {
-                    if (isUsingUVLight && !hasFoundCard) {
-                        symbolElements[idx].classList.add('active');
-                        if (idx === correctBookIndex) {
-                            hasFoundCard = true;
-                            const cardSlot = document.getElementById('card-slot');
-                            cardSlot.style.backgroundImage = 'url(../public/images/card.png)';
-                            cardSlot.style.backgroundSize = 'contain';
-                            cardSlot.style.backgroundRepeat = 'no-repeat';
-                            cardSlot.style.boxShadow = '0 0 15px #8a2be2';
-                            showDialog('恭喜！你找到了隐藏的卡片！');
-                        } else {
-                            showDialog('这里似乎没有什么特别的发现……');
-                        }
-                    }
-                });
-            });
+            // 场景切换按钮交互（示例，实际跳转逻辑需根据你的路由或页面结构实现）
+            document.getElementById('go-to-meeting').onclick = function() {
+                showDialog('前往会议室（此处应切换到会议室场景）');
+                // window.location.href = 'meeting-room.html'; // 示例跳转
+            };
+            document.getElementById('go-to-library').onclick = function() {
+                showDialog('返回图书角（此处应切换到图书角场景）');
+                // window.location.href = 'library-scene.html'; // 示例跳转
+            };
             function showDialog(text) {
                 dialogBox.textContent = text;
                 dialogBox.style.display = 'block';
