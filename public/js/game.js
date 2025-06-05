@@ -23,7 +23,8 @@ class QuantumMatrixGame {
                 cup: false
             },
             conferenceAllAnomaliesFound: false,
-            conferenceVisited: false
+            conferenceVisited: false,
+            cabinetTopSearched: false
         };
         this.inventory = [];
         this.dialogTimer = null; // 添加对话框定时器
@@ -1166,6 +1167,11 @@ Level <span style="color: #ff4444; font-weight: bold; background: rgba(255, 68, 
             
             // 绑定桌面图标事件
             this.bindDesktopIconEvents();
+            
+            // 等待DOM更新后缩放桌面图标热区
+            setTimeout(() => {
+                this.scaleDesktopIcons();
+            }, 100);
         } else {
             this.showDialog("密码错误！提示：date is key");
         }
@@ -1181,17 +1187,18 @@ Level <span style="color: #ff4444; font-weight: bold; background: rgba(255, 68, 
             // 修复桌面背景显示问题
             const desktopBackground = document.querySelector('.desktop-background');
             if (desktopBackground) {
+
                 // 强制重置背景样式，确保优先级
-                desktopBackground.style.cssText = `
-                    background-image: url('./public/images/computer_desk.png') !important;
-                    background-size: cover !important;
-                    background-repeat: no-repeat !important;
-                    background-position: center center !important;
-                    width: 100% !important;
-                    height: 100% !important;
-                    position: relative !important;
-                    display: block !important;
-                `;
+                // desktopBackground.style.cssText = `
+                //     background-image: url('./public/images/computer_desk.png') !important;
+                //     background-size: cover !important;
+                //     background-repeat: no-repeat !important;
+                //     background-position: center center !important;
+                //     width: 100% !important;
+                //     height: 100% !important;
+                //     position: relative !important;
+                //     display: block !important;
+                // `;
                 
                 console.log('✅ 桌面背景图片已强制设置:', desktopBackground.style.backgroundImage);
                 
@@ -1211,12 +1218,66 @@ Level <span style="color: #ff4444; font-weight: bold; background: rgba(255, 68, 
             
             // 绑定桌面图标事件
             this.bindDesktopIconEvents();
+            
+            // 缩放桌面图标热区
+            setTimeout(() => {
+                this.scaleDesktopIcons();
+            }, 100);
         }, 100);
     }
     
-    // 桌面图标缩放功能（已取消）
+    // 桌面图标缩放功能（基于1194x734背景图）
     scaleDesktopIcons() {
-        // 已取消缩放功能
+        const desktopElement = document.getElementById('computer-desktop');
+        if (!desktopElement) {
+            return;
+        }
+        
+        // 获取桌面容器的实际尺寸
+        const desktopRect = desktopElement.getBoundingClientRect();
+        const desktopWidth = desktopRect.width;
+        const desktopHeight = desktopRect.height;
+        console.log(12121212,desktopWidth, desktopHeight);
+        
+        // 基础图片尺寸（桌面背景图的原始尺寸）
+        const baseWidth = 1194;
+        const baseHeight = 734;
+        
+        // 计算缩放比例
+        const scaleX = desktopWidth / baseWidth;
+        const scaleY = desktopHeight / baseHeight;
+        const scale = Math.max(scaleX, scaleY);
+        
+        // 计算居中偏移
+        const scaledWidth = baseWidth * scale;
+        const scaledHeight = baseHeight * scale;
+        const offsetX = (desktopWidth - scaledWidth) / 2;
+        const offsetY = (desktopHeight - scaledHeight) / 2;
+        
+        // 桌面图标的基础坐标（基于1194x734尺寸）
+        const iconCoords = [
+            { app: 'email', x: 110, y: 105, width: 120, height: 125 },
+            { app: 'folder', x: 405, y: 85, width: 255, height: 170 },
+            { app: 'gallery', x: 755, y: 85, width: 260, height: 155 },
+            { app: 'trash', x: 200, y: 380, width: 200, height: 205 },
+            { app: 'terminal', x: 620, y: 365, width: 270, height: 160 }
+        ];
+        
+        // 应用缩放和偏移到所有图标
+        iconCoords.forEach(iconData => {
+            const icon = document.querySelector(`.desktop-icon[data-app="${iconData.app}"]`);
+            if (icon) {
+                const scaledX = iconData.x * scale + offsetX;
+                const scaledY = iconData.y * scale + offsetY;
+                const scaledWidth = iconData.width * scale;
+                const scaledHeight = iconData.height * scale;
+                
+                icon.style.left = scaledX + 'px';
+                icon.style.top = scaledY + 'px';
+                icon.style.width = scaledWidth + 'px';
+                icon.style.height = scaledHeight + 'px';
+            }
+        });
     }
     
     // 绑定桌面图标点击事件
@@ -1385,7 +1446,8 @@ Level <span style="color: #ff4444; font-weight: bold; background: rgba(255, 68, 
     }
     
     examineCabinetTop() {
-        if (!this.gameState.inventory.device) {
+        if (!this.gameState.cabinetTopSearched) {
+            this.gameState.cabinetTopSearched = true;
             this.collectItem('device', '破译器');
             this.showDialog("你在柜子上找到了一个神秘的电子设备。");
         } else {
