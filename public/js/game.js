@@ -2485,7 +2485,8 @@ S.L. (System Leak)
         const result = document.getElementById('claw-result');
         const discardButton = document.getElementById('discard-toy');
         const status = document.getElementById('claw-status');
-        
+        const playButton = document.getElementById('play-claw');
+
         // 确保结果容器存在并清空
         if (result) {
             result.innerHTML = '';
@@ -2499,7 +2500,7 @@ S.L. (System Leak)
                 margin: 10px 0 !important;
             `;
         }
-        
+
         if (this.clawMachineUsed < 3) {
             // 前2次获得玩偶
             if (result) {
@@ -2515,7 +2516,9 @@ S.L. (System Leak)
             //     discardButton.style.display = 'block';
             // }
             // discardButton.textContent = '丢弃玩偶';
-            playButton.textContent= '丢弃玩偶';
+            if (playButton) {
+                playButton.textContent = '丢弃玩偶';
+            }
             
             if (status) {
                 status.textContent = '获得了一个玩偶！';
@@ -3855,7 +3858,7 @@ Dr. M.
     // 门禁密码验证
     verifyDoorAccess() {
         const input = document.getElementById('door-password-input');
-        const password = input.value.trim();
+        const password = input.value.toLowerCase().trim();
         
         if (password === 'aroga') {
             // 密码正确，触发游戏结束序列
