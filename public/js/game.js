@@ -664,56 +664,49 @@ class QuantumMatrixGame {
         const correctBookIndex = 0;
         const width = container.offsetWidth;
         const height = container.offsetHeight;
-        // 物品栏插槽
-        const slots = document.querySelectorAll('#inventory .inventory-slot');
-        const uvLightSlot = slots[0];
-        const cardSlot = slots[1];
+        
         // 状态
         if (!this.libraryState) {
             this.libraryState = { hasUVLight: false, isUsingUVLight: false, hasFoundCard: false };
         }
         const state = this.libraryState;
-        // 2. 生成手电筒按钮
-        let uvLight = container.querySelector('.library-uv-light');
-        if (!uvLight) {
-            uvLight = document.createElement('div');
-            uvLight.className = 'library-uv-light';
-            uvLight.style.position = 'absolute';
-            uvLight.style.bottom = '29%';
-            uvLight.style.left = '75%';
-            uvLight.style.transform = 'translateX(-50%)';
-            uvLight.style.width = '80px';
-            uvLight.style.height = '80px';
-            uvLight.style.background = "url('./public/images/shou.png') no-repeat center center";
-            uvLight.style.backgroundSize = 'contain';
-            uvLight.style.backgroundColor = 'transparent';
-            uvLight.style.cursor = 'pointer';
-            uvLight.style.zIndex = '100';
-            container.appendChild(uvLight);
-        }
-        uvLight.onclick = () => {
-            if (!state.hasUVLight) {
+        
+        // 2. 生成手电筒按钮（只有当没有获得过时才显示）
+        if (!state.hasUVLight) {
+            let uvLight = container.querySelector('.library-uv-light');
+            if (!uvLight) {
+                uvLight = document.createElement('div');
+                uvLight.className = 'library-uv-light';
+                uvLight.style.position = 'absolute';
+                uvLight.style.bottom = '29%';
+                uvLight.style.left = '75%';
+                uvLight.style.transform = 'translateX(-50%)';
+                uvLight.style.width = '80px';
+                uvLight.style.height = '80px';
+                uvLight.style.background = "url('./public/images/shou.png') no-repeat center center";
+                uvLight.style.backgroundSize = 'contain';
+                uvLight.style.backgroundColor = 'transparent';
+                uvLight.style.cursor = 'pointer';
+                uvLight.style.zIndex = '100';
+                container.appendChild(uvLight);
+            }
+            uvLight.onclick = () => {
                 state.hasUVLight = true;
                 uvLight.style.display = 'none';
-                if (uvLightSlot) {
-                    uvLightSlot.style.backgroundImage = "url('./public/images/shou.png')";
-                    uvLightSlot.style.backgroundSize = 'contain';
-                    uvLightSlot.style.backgroundRepeat = 'no-repeat';
-                }
+                this.collectItem('uvlight', '紫外线手电筒');
                 this.showDialog('获得了紫外线手电筒');
-            }
-        };
-        // 3. 物品栏手电筒点击
-        if (uvLightSlot) {
-            uvLightSlot.onclick = () => {
-                if (state.hasUVLight) {
-                    state.isUsingUVLight = !state.isUsingUVLight;
-                    uvLightSlot.style.border = state.isUsingUVLight ? '2px solid #8a2be2' : '';
-                    uvLightSlot.style.boxShadow = state.isUsingUVLight ? '0 0 15px #8a2be2' : 'none';
-                    this.showDialog(state.isUsingUVLight ? '正在使用紫外线手电筒' : '停止使用紫外线手电筒');
-                }
             };
         }
+        
+        // 3. 检查物品栏中的手电筒使用
+        const handleUVLightToggle = () => {
+            if (this.gameState.inventory.uvlight) {
+                state.isUsingUVLight = !state.isUsingUVLight;
+                this.showDialog(state.isUsingUVLight ? '正在使用紫外线手电筒' : '停止使用紫外线手电筒');
+                this.updateInventory(); // 更新物品栏显示
+            }
+        };
+        
         // 4. 生成热区和符号
         const symbolElements = [];
         bookHotspots.forEach((pos, idx) => {
@@ -735,13 +728,7 @@ class QuantumMatrixGame {
                     symbolElements[idx].style.display = 'flex';
                     if (idx === correctBookIndex) {
                         state.hasFoundCard = true;
-                        if (cardSlot) {
-                            cardSlot.classList.add('inventory-item');
-                            cardSlot.style.backgroundImage = "url('./public/images/pwd3.png')";
-                            cardSlot.style.backgroundSize = 'contain';
-                            cardSlot.style.backgroundRepeat = 'no-repeat';
-                            cardSlot.style.boxShadow = '0 0 15px #8a2be2';
-                        }
+                        this.collectItem('pwd4', '密码纸片4');
                         this.showDialog('书本中发现了一张密码纸片。');
                     } else {
                         this.showDialog('这里似乎没有什么特别的发现……');
@@ -749,6 +736,7 @@ class QuantumMatrixGame {
                 }
             };
             container.appendChild(btn);
+            
             // 符号
             const symbol = document.createElement('span');
             symbol.className = 'library-symbol';
@@ -769,6 +757,17 @@ class QuantumMatrixGame {
             container.appendChild(symbol);
             symbolElements[idx] = symbol;
         });
+        
+        // 绑定手电筒点击事件到物品栏
+        setTimeout(() => {
+            const slots = document.querySelectorAll('.inventory-slot');
+            slots.forEach(slot => {
+                if (slot.querySelector('.item-icon[style*="uvlight"]') || 
+                    (slot.style.backgroundImage && slot.style.backgroundImage.includes('shou.png'))) {
+                    slot.onclick = handleUVLightToggle;
+                }
+            });
+        }, 100);
     }
     
     createBreakroomInteractives(container) {
@@ -1968,7 +1967,7 @@ S.L. (System Leak)
     updateGameScore() {
         const scoreElement = document.getElementById('game-score');
         if (scoreElement) {
-            scoreElement.textContent = `${this.gameScore}/10`;
+            scoreElement.textContent = `${this.gameScore}/5`;
         }
     }
 
@@ -2174,7 +2173,7 @@ S.L. (System Leak)
                     this.removeMatches(matches, true);
                     
                     // 检查是否获胜
-                    if (this.gameScore >= 10) {
+                    if (this.gameScore >= 5) {
                         this.gameState.gameWon = true;
                         this.collectItem('coin', '游戏币');
                         this.showDialog('🎉 恭喜！你赢得了三消游戏并获得了游戏币！');
@@ -2746,10 +2745,16 @@ S.L. (System Leak)
     
     // 物品管理
     collectItem(itemId, itemName) {
+        // 特殊处理手电筒的图片路径
+        let imagePath = `./public/images/${itemId}.png`;
+        if (itemId === 'uvlight') {
+            imagePath = './public/images/shou.png';
+        }
+        
         this.gameState.inventory[itemId] = {
             id: itemId,
             name: itemName,
-            image: `./public/images/${itemId}.png`
+            image: imagePath
         };
         this.updateInventory();
         this.playAudio('click-audio');
@@ -2791,6 +2796,15 @@ S.L. (System Leak)
                 if (this.selectedItem && items[index].id === this.selectedItem.id) {
                     slot.classList.add('selected-item');
                 }
+                
+                // 检查是否是正在使用的手电筒
+                if (items[index].id === 'uvlight' && this.libraryState && this.libraryState.isUsingUVLight) {
+                    slot.style.border = '2px solid #8a2be2';
+                    slot.style.boxShadow = '0 0 15px #8a2be2';
+                } else if (items[index].id === 'uvlight') {
+                    slot.style.border = '';
+                    slot.style.boxShadow = '';
+                }
             }
         });
     }
@@ -2813,6 +2827,13 @@ S.L. (System Leak)
                     this.showDialog(`已选择${item.name}，现在可以将其放入相框`);
                 }
                 this.updateInventory(); // 更新视觉效果
+            } else if (item.id === 'uvlight') {
+                // 手电筒使用切换
+                if (this.libraryState) {
+                    this.libraryState.isUsingUVLight = !this.libraryState.isUsingUVLight;
+                    this.showDialog(this.libraryState.isUsingUVLight ? '正在使用紫外线手电筒' : '停止使用紫外线手电筒');
+                    this.updateInventory(); // 更新物品栏显示
+                }
             } else if (item.id === 'doorcard') {
                 // 门禁卡可以被选中/取消选中
                 if (this.selectedItem && this.selectedItem.id === 'doorcard') {
