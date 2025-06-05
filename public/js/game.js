@@ -325,6 +325,8 @@ class QuantumMatrixGame {
         this.showDialog("你是林默，今天是你在量子矩阵科技的第一天。奇怪的是，办公室里一个人也没有。环境很不对劲，你必须找出离开的方法。");
         this.gameState.isFirstTime = false;
         
+        // 初始化导航按钮状态
+        this.updateNavigationButtons();
         
         // 确保热区正确创建
         setTimeout(() => {
@@ -958,8 +960,38 @@ class QuantumMatrixGame {
         const prevBtn = document.getElementById('prev-scene');
         const nextBtn = document.getElementById('next-scene');
         
-        prevBtn.style.display = this.currentSceneIndex > 0 ? 'flex' : 'none';
-        nextBtn.style.display = this.currentSceneIndex < this.scenes.length - 1 ? 'flex' : 'none';
+        const showPrev = this.currentSceneIndex > 0;
+        const showNext = this.currentSceneIndex < this.scenes.length - 1;
+        
+        if (showPrev && showNext) {
+            // 两个按钮都显示
+            prevBtn.style.display = 'flex';
+            nextBtn.style.display = 'flex';
+            prevBtn.style.opacity = '1';
+            nextBtn.style.opacity = '1';
+            prevBtn.style.pointerEvents = 'auto';
+            nextBtn.style.pointerEvents = 'auto';
+        } else if (showNext && !showPrev) {
+            // 只显示右按钮，左边设置透明占位
+            prevBtn.style.display = 'flex';
+            nextBtn.style.display = 'flex';
+            prevBtn.style.opacity = '0';
+            nextBtn.style.opacity = '1';
+            prevBtn.style.pointerEvents = 'none';
+            nextBtn.style.pointerEvents = 'auto';
+        } else if (showPrev && !showNext) {
+            // 只显示左按钮，右边设置透明占位
+            prevBtn.style.display = 'flex';
+            nextBtn.style.display = 'flex';
+            prevBtn.style.opacity = '1';
+            nextBtn.style.opacity = '0';
+            prevBtn.style.pointerEvents = 'auto';
+            nextBtn.style.pointerEvents = 'none';
+        } else {
+            // 都不显示
+            prevBtn.style.display = 'none';
+            nextBtn.style.display = 'none';
+        }
     }
     
     switchBackgroundMusic() {

@@ -269,12 +269,15 @@ body {
 /* 场景导航 */
 .scene-navigation {
     position: absolute;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 50%;
+    left: 0;
+    right: 0;
+    transform: translateY(-50%);
     display: flex;
-    gap: 20px;
+    justify-content: space-between;
+    padding: 0 20px;
     z-index: 100;
+    pointer-events: none; /* 让容器本身不拦截点击事件 */
 }
 
 .scene-arrow {
@@ -290,6 +293,7 @@ body {
     cursor: pointer;
     font-size: 20px;
     transition: all 0.3s ease;
+    pointer-events: auto; /* 让按钮本身可以接收点击事件 */
 }
 
 .scene-arrow:hover {
