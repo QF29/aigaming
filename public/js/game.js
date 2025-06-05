@@ -618,7 +618,7 @@ class QuantumMatrixGame {
             { name: 'door', x: 1287, y: 135.625, width: 255, height: 540, action: () => this.examineDoor() },
             { name: 'flowerpot', x: 1096, y: 631.625, width: 96, height: 106, action: () => this.examineFlowerpot() },
             { name: 'clock', x: 932, y: 144.625, width: 152, height: 153, action: () => this.examineClock() },
-            { name: 'book', x: 1043, y: 363.625, width: 199, height: 226, action: () => this.examineBook() },
+            { name: 'plant', x: 1043, y: 363.625, width: 199, height: 226, action: () => this.examinePlant() },
             { name: 'computer', x: 632, y: 389.625, width: 190, height: 120, action: () => this.openComputer() },
             { name: 'drawer1', x: 412, y: 680.625, width: 164, height: 69, action: () => this.openDrawer(1) },
             { name: 'drawer2', x: 852, y: 674.625, width: 140, height: 71, action: () => this.openDrawer(2) },
