@@ -24,7 +24,8 @@ class QuantumMatrixGame {
             },
             conferenceAllAnomaliesFound: false,
             conferenceVisited: false,
-            cabinetTopSearched: false
+            cabinetTopSearched: false,
+            paperCollectedFromFlowerpot: false
         };
         this.inventory = [];
         this.dialogTimer = null; // 添加对话框定时器
@@ -1145,11 +1146,12 @@ Level <span style="color: #ff4444; font-weight: bold; background: rgba(255, 68, 
     }
     
     examineFlowerpot() {
-        if (!this.gameState.inventory.paper) {
+        if (!this.gameState.paperCollectedFromFlowerpot) {
+            this.gameState.paperCollectedFromFlowerpot = true;
             this.collectItem('paper', '纸团');
             this.showDialog("你在花盆的泥土中发现了一张皱巴巴的纸团。");
         } else {
-            this.showDialog("这是你发现纸团的花盆。");
+            this.showDialog("这是你发现纸团的花盆，里面已经没有其他东西了。");
         }
     }
     
