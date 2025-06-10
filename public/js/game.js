@@ -25,7 +25,11 @@ class QuantumMatrixGame {
             conferenceAllAnomaliesFound: false,
             conferenceVisited: false,
             cabinetTopSearched: false,
-            paperCollectedFromFlowerpot: false
+            paperCollectedFromFlowerpot: false,
+            clockExamined: false,
+            cupExamined: false,
+            bookExamined: false,
+            libraryUVSearchCompleted: false
         };
         this.inventory = [];
         this.dialogTimer = null; // 添加对话框定时器
@@ -727,15 +731,17 @@ class QuantumMatrixGame {
             btn.setAttribute('data-symbol', symbols[idx]);
             btn.setAttribute('data-idx', idx);
             btn.onclick = () => {
-                if (state.isUsingUVLight && !state.hasFoundCard) {
+                if (state.isUsingUVLight && !this.gameState.libraryUVSearchCompleted) {
                     symbolElements[idx].style.display = 'flex';
                     if (idx === correctBookIndex) {
-                        state.hasFoundCard = true;
+                        this.gameState.libraryUVSearchCompleted = true;
                         this.collectItem('pwd4', '密码纸片4');
                         this.showDialog('书本中发现了一张密码纸片。');
                     } else {
                         this.showDialog('这里似乎没有什么特别的发现……');
                     }
+                } else if (this.gameState.libraryUVSearchCompleted) {
+                    this.showDialog('这里已经没有更多的发现了。');
                 }
             };
             container.appendChild(btn);
@@ -1156,7 +1162,8 @@ Level <span style="color: #ff4444; font-weight: bold; background: rgba(255, 68, 
     }
     
     examineClock() {
-        if (!this.gameState.inventory.pwd1) {
+        if (!this.gameState.clockExamined) {
+            this.gameState.clockExamined = true;
             this.collectItem('pwd1', '密码纸片1');
             this.showDialog("你在时钟后面发现了一张密码纸片。");
         } else {
@@ -1164,7 +1171,8 @@ Level <span style="color: #ff4444; font-weight: bold; background: rgba(255, 68, 
         }
     }
     examineBook() {
-        if (!this.gameState.inventory.pwd2) {
+        if (!this.gameState.bookExamined) {
+            this.gameState.bookExamined = true;
             this.collectItem('pwd3', '密码纸片3');
             this.showDialog("你在书架上发现一张密码纸片。");
         } else {
@@ -1442,10 +1450,11 @@ Level <span style="color: #ff4444; font-weight: bold; background: rgba(255, 68, 
     }
     
     examineCup() {
-        if (!this.gameState.inventory.pwd2) {
+        if (!this.gameState.cupExamined) {
+            this.gameState.cupExamined = true;
             this.collectItem('pwd2', '密码纸片2');
             this.showDialog("你在杯子底部发现了一张密码纸片。");
-            } else {
+        } else {
             this.showDialog("一个普通的杯子。");
         }
     }
